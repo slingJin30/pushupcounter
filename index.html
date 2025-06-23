@@ -3,163 +3,40 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Push Up Counter | Built by SlingJin30</title>
-    <meta name="description" content="A modern, customizable push-up counter web app for TikTok Live and personal fitness tracking. Set goals, save progress, personalize with your username, and share your achievements!">
-    <meta name="keywords" content="push up counter, fitness tracker, TikTok Live, workout, exercise, progress tracker, goal setting, web app, screenshot, motivation, personalized">
+    <meta name="description" content="A modern, customizable push-up counter web app for   Live and personal fitness tracking. Set goals, save progress, personalize with your username, and share your achievements!">
+    <meta name="keywords" content="push up counter, fitness tracker, Live, workout, exercise, progress tracker, goal setting, web app, screenshot, motivation, personalized">
     <meta name="author" content="Your Name">
-    <meta property="og:title" content="Push Up Counter | TikTok Live Fitness Tracker">
-    <meta property="og:description" content="Track your push-ups live, set goals, save progress, and share your achievements. Perfect for TikTok Live and personal motivation!">
-    <meta property="og:image" content="https://countpushups.netlify.app/assets/pushup-og-image.png">
+    <meta property="og:title" content="Push Up Counter | Live Fitness Tracker">
+    <meta property="og:description" content="Track your push-ups live, set goals, save progress, and share your achievements. Perfect for personal motivation!">
+    <meta property="og:image" content="assets/img/pushup-og-image.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://countpushups.netlify.app/">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Push Up Counter | TikTok Live Fitness Tracker">
-    <meta name="twitter:description" content="A modern push-up counter for TikTok Live and personal fitness. Set goals, save progress, and share your journey!">
-    <meta name="twitter:image" content="https://countpushups.com/assets/pushup-og-image.png">
-    <!-- Use CDN Bootstrap CSS -->
+    <meta name="twitter:title" content="Push Up Counter |  Fitness Tracker">
+    <meta name="twitter:description" content="A modern push-up counter for Live and personal fitness. Set goals, save progress, and share your journey!">
+    <meta name="twitter:image" content="assets/img/pushup-og-image.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #18181b 0%, #6366f1 100%);
-            font-family: 'Lato', sans-serif;
-            min-height: 100vh;
-            color: #fff;
-        }
-
-        .navbar {
-            background: rgba(30, 41, 59, 0.95) !important;
-            border-radius: 0 0 1.5rem 1.5rem;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .navbar-brand span {
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #fff;
-        }
-
-        .theme-switcher {
-            cursor: pointer;
-            font-size: 2rem;
-            transition: color 0.2s;
-        }
-
-        .theme-switcher:hover {
-            color: #5d5fcf;
-        }
-
-        .btn-outline-primary,
-        .btn-success,
-        .btn-warning,
-        .btn-secondary,
-        .btn-primary,
-        .btn-danger {
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-radius: 2rem;
-            padding: 0.75rem 2rem;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
-            transition: transform 0.1s;
-        }
-
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        .counter-display {
-            font-size: 7rem;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 4px 32px #6366f1, 0 2px 0 #fff;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
-            animation: pop 0.4s;
-        }
-
-        @keyframes pop {
-            0% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .motivational {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #a5b4fc;
-            margin: 1rem 0;
-            text-shadow: 0 2px 8px #6366f1;
-        }
-
-        .progress {
-            height: 2.5rem;
-            background: #1e293b;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
-        }
-
-        .progress-bar {
-            font-size: 1.3rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #6366f1 0%, #a5b4fc 100%);
-            color: #fff;
-            text-shadow: 0 2px 8px #6366f1;
-            border-radius: 1.5rem;
-            transition: width 0.4s cubic-bezier(.4, 2, .6, 1);
-        }
-
-        .modal-content {
-            background: #1e293b;
-            color: #fff;
-            border-radius: 1.5rem;
-            box-shadow: 0 2px 24px #6366f1;
-        }
-
-        .modal-header,
-        .modal-footer {
-            border: none;
-        }
-
-        .form-control {
-            border-radius: 1rem;
-            font-size: 1.2rem;
-            background: #fff;
-            color: #1e293b;
-        }
-
-        @media (max-width: 768px) {
-            .counter-display {
-                font-size: 3.5rem;
-            }
-
-            .motivational {
-                font-size: 1.1rem;
-            }
-
-            .btn {
-                font-size: 1rem;
-                padding: 0.5rem 1.2rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md bg-body py-3">
+    <nav class="navbar navbar-expand-md custom-navbar py-3 shadow-sm">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#"><span>🏋️ Push Up Counter</span></a>
-            <div class="ms-auto d-flex align-items-center">
-                <span class="theme-switcher me-3" id="themeSwitcher" title="Switch Theme">🌙</span>
-                <button class="btn btn-outline-primary" id="shareBtn">Share Site</button>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#" style="font-size:2.2rem; letter-spacing:1.5px;">
+                <span style="font-size:2.3rem;">🏋️</span>
+                <span style="font-family:'Montserrat','Bebas Neue',Arial,sans-serif; font-weight:800; color:#fff; text-shadow:0 2px 8px #6366f1;">Push Up Counter</span>
+            </a>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <span class="theme-switcher me-2" id="themeSwitcher" title="Switch Theme" style="font-size:2rem; cursor:pointer; transition:color 0.2s;">🌙</span>
+                <button class="btn btn-outline-primary shadow-sm" id="shareBtn" style="font-weight:700; border-radius:2rem; transition:background 0.2s;">Share Site</button>
+                <a href="https://github.com/slingJin30/pushupcounter/archive/refs/heads/main.zip" target="_blank" rel="noopener" class="btn btn-success d-flex align-items-center gap-2" style="font-weight:700; border-radius:2rem;">
+                    <i class="bi bi-download" style="font-size:1.5rem;"></i> Download ZIP
+                </a>
             </div>
         </div>
     </nav>
@@ -171,10 +48,12 @@
                 </div>
                 <div class="my-3">
                     <button class="btn btn-lg btn-info shadow" id="screenshotBtn" style="color:#fff;font-weight:700;">
-                        📸 Save Progress as Image
+                        <i class="bi bi-camera"></i> Save Progress Image
+                    </button>
+                    <button class="btn btn-lg btn-danger shadow" id="ytMusicBtn" style="color:#fff;font-weight:700; margin-left:10px;">
+                        <i class="bi bi-youtube"></i> YouTube Workout Music
                     </button>
                 </div>
-                <!-- Personalization: Username -->
                 <div class="mb-3">
                     <form id="usernameForm" class="d-inline-flex align-items-center gap-2">
                         <label for="usernameInput" class="form-label mb-0 fw-bold" style="color:#fff;">Username:</label>
@@ -183,7 +62,6 @@
                         <button type="submit" class="btn btn-primary btn-sm">Save</button>
                     </form>
                 </div>
-                <!-- Screenshot area starts here -->
                 <div id="screenshotArea"
                     style="display:inline-block; background:rgba(30,41,59,0.95); border-radius:2rem; padding:2rem 1rem; box-shadow:0 4px 24px rgba(0,0,0,0.12);">
                     <div class="fw-bold text-info mb-2" id="displayUsername" style="font-size:1.3rem;"></div>
@@ -192,23 +70,43 @@
                     <div class="progress my-3" style="min-width:250px;">
                         <div class="progress-bar bg-primary" id="progressBar" style="width: 0%;">0 / 2500</div>
                     </div>
-                    <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-                        <button class="btn btn-lg btn-success" id="addOneBtn">+1</button>
-                        <button class="btn btn-lg btn-warning" id="addFiveBtn">+5</button>
-                        <button class="btn btn-lg btn-warning" id="addTenBtn">+10</button>
-                        <button class="btn btn-lg btn-secondary" id="addFiftyBtn">+50</button>
-                        <button class="btn btn-lg btn-danger" id="subtractOneBtn">-1</button>
-                        <button class="btn btn-lg btn-danger" id="subtractTenBtn">-10</button>
-                        <button class="btn btn-lg btn-outline-primary" id="resetBtn">Reset</button>
-                        <button class="btn btn-lg btn-secondary" id="setGoalBtn">Set Goal</button>
+                    <div class="d-flex flex-wrap justify-content-center gap-3 mb-3">
+                        <div class="btn-group" role="group" aria-label="Add">
+                            <button class="btn btn-success btn-lg d-flex align-items-center" id="addOneBtn" data-bs-toggle="tooltip" data-bs-title="Add 1">
+                                <i class="bi bi-plus-circle"></i> <span class="ms-2">+1</span>
+                            </button>
+                            <button class="btn btn-warning btn-lg d-flex align-items-center" id="addFiveBtn" data-bs-toggle="tooltip" data-bs-title="Add 5">
+                                <i class="bi bi-plus-circle"></i> <span class="ms-2">+5</span>
+                            </button>
+                            <button class="btn btn-warning btn-lg d-flex align-items-center" id="addTenBtn" data-bs-toggle="tooltip" data-bs-title="Add 10">
+                                <i class="bi bi-plus-circle"></i> <span class="ms-2">+10</span>
+                            </button>
+                            <button class="btn btn-secondary btn-lg d-flex align-items-center" id="addFiftyBtn" data-bs-toggle="tooltip" data-bs-title="Add 50">
+                                <i class="bi bi-plus-circle"></i> <span class="ms-2">+50</span>
+                            </button>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Subtract">
+                            <button class="btn btn-danger btn-lg d-flex align-items-center" id="subtractOneBtn" data-bs-toggle="tooltip" data-bs-title="Subtract 1">
+                                <i class="bi bi-dash-circle"></i> <span class="ms-2">-1</span>
+                            </button>
+                            <button class="btn btn-danger btn-lg d-flex align-items-center" id="subtractTenBtn" data-bs-toggle="tooltip" data-bs-title="Subtract 10">
+                                <i class="bi bi-dash-circle"></i> <span class="ms-2">-10</span>
+                            </button>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Actions">
+                            <button class="btn btn-outline-primary btn-lg d-flex align-items-center" id="resetBtn" data-bs-toggle="tooltip" data-bs-title="Reset Counter">
+                                <i class="bi bi-arrow-counterclockwise"></i> <span class="ms-2">Reset</span>
+                            </button>
+                            <button class="btn btn-secondary btn-lg d-flex align-items-center" id="setGoalBtn" data-bs-toggle="tooltip" data-bs-title="Set Goal">
+                                <i class="bi bi-flag"></i> <span class="ms-2">Set Goal</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <!-- Screenshot area ends here -->
             </div>
         </div>
     </div>
 
-    <!-- Set Goal Modal -->
     <div class="modal fade" id="goalModal" tabindex="-1" aria-labelledby="goalModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -226,188 +124,48 @@
         </div>
     </div>
 
+    <div class="container my-4">
+        <div class="donate-card mx-auto">
+            <div class="donate-content row g-4 align-items-stretch flex-md-nowrap justify-content-center">
+                <div class="col-12 col-md-6 d-flex align-items-center">
+                    <div>
+                        <div class="donate-title">Support the Creator</div>
+                        <div class="donate-desc">If you enjoy this app, you can buy me a coffee:</div>
+                        <div class="donate-actions d-flex align-items-center flex-wrap">
+                            <a href="https://buymeacoffee.com/slingjin30" target="_blank" rel="noopener" class="donate-btn-coffee">
+                                Buy Me a Coffee
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 d-flex align-items-center">
+                    <div>
+                        <div class="donate-title">Support with Bitcoin</div>
+                        <div class="donate-desc">You can also support me with Bitcoin:</div>
+                        <div class="donate-actions d-flex align-items-center flex-wrap">
+                            <span class="donate-btc-label">Address:</span>
+                            <span class="donate-btc" id="bitcoinAddress" style="word-break:break-all; ">bc1qhyt2vq0rlc596eee2jgef79fvmm9apm5cz57a3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4" style="background: linear-gradient(90deg, #0d6efd 0%, #6610f2 100%); color: #fff; font-size:1.1rem; font-weight:600; letter-spacing:0.5px; border-radius: 1.5rem 1.5rem 0 0; box-shadow: 0 -2px 16px rgba(13,110,253,0.15); margin-top:2rem;">
+        <span>
+            © <span id="year"></span> Push Up Counter &middot;
+            <a href="https://github.com/slingjin30/pushupcounter" target="_blank" rel="noopener" style="color:#ffd700; text-decoration:underline; font-weight:700;">
+                @slingjin30
+            </a>
+        </span>
+        <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+    </footer>
+
     <audio id="pushupSound" src="assets/sounds/pushup.mp3" preload="auto"></audio>
-    <!-- Use CDN Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script>
-        // --- Push Up Counter JS (with localStorage and screenshot area) ---
-        let completedCount = Number(localStorage.getItem('completedCount')) || 0;
-        let goal = Number(localStorage.getItem('goal')) || 2500;
-        const motivationalMessages = [
-            "Keep going! You're crushing it! 💪",
-            "Push through the burn! 🔥",
-            "Every rep counts! 🏆",
-            "TikTok is watching, don't stop now! 🎥",
-            "You’re unstoppable! 🚀",
-            "Almost there, keep pushing! 🙌",
-            "Feel the power! 💥",
-            "You got this! 👊"
-        ];
-
-        const completedCountEl = document.getElementById('completedCount');
-        const progressBarEl = document.getElementById('progressBar');
-        const motivationalMsgEl = document.getElementById('motivationalMsg');
-        const addOneBtn = document.getElementById('addOneBtn');
-        const addFiveBtn = document.getElementById('addFiveBtn');
-        const addTenBtn = document.getElementById('addTenBtn');
-        const addFiftyBtn = document.getElementById('addFiftyBtn');
-        const subtractOneBtn = document.getElementById('subtractOneBtn');
-        const subtractTenBtn = document.getElementById('subtractTenBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const setGoalBtn = document.getElementById('setGoalBtn');
-        const goalModal = new bootstrap.Modal(document.getElementById('goalModal'));
-        const goalInput = document.getElementById('goalInput');
-        const saveGoalBtn = document.getElementById('saveGoalBtn');
-        const themeSwitcher = document.getElementById('themeSwitcher');
-        const shareBtn = document.getElementById('shareBtn');
-        const pushupSound = document.getElementById('pushupSound');
-        const screenshotBtn = document.getElementById('screenshotBtn');
-        const usernameForm = document.getElementById('usernameForm');
-        const usernameInput = document.getElementById('usernameInput');
-        const displayUsername = document.getElementById('displayUsername');
-
-        // Load username from localStorage
-        let username = localStorage.getItem('pushupUsername') || '';
-        if (username) {
-            displayUsername.textContent = `@${username}`;
-            usernameInput.value = username;
-        } else {
-            displayUsername.textContent = '';
-        }
-
-        // Handle username form submit
-        usernameForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            username = usernameInput.value.trim().replace(/\s+/g, '');
-            if (username.length > 0) {
-                localStorage.setItem('pushupUsername', username);
-                displayUsername.textContent = `@${username}`;
-            } else {
-                displayUsername.textContent = '';
-                localStorage.removeItem('pushupUsername');
-            }
-        });
-
-        function updateDisplay() {
-            completedCountEl.textContent = completedCount;
-            progressBarEl.style.width = `${Math.min(100, (completedCount / goal) * 100)}%`;
-            progressBarEl.textContent = `${completedCount} / ${goal}`;
-            completedCountEl.classList.remove('pop');
-            void completedCountEl.offsetWidth;
-            completedCountEl.classList.add('pop');
-            if (completedCount >= goal) {
-                motivationalMsgEl.textContent = "Goal reached! 🎉 Set a new one!";
-            } else {
-                motivationalMsgEl.textContent = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
-            }
-            localStorage.setItem('completedCount', completedCount);
-            localStorage.setItem('goal', goal);
-        }
-
-        function addPushUps(amount) {
-            completedCount += amount;
-            if (completedCount < 0) completedCount = 0;
-            pushupSound.currentTime = 0;
-            pushupSound.play();
-            updateDisplay();
-        }
-
-        addOneBtn.addEventListener('click', () => addPushUps(1));
-        addFiveBtn.addEventListener('click', () => addPushUps(5));
-        addTenBtn.addEventListener('click', () => addPushUps(10));
-        addFiftyBtn.addEventListener('click', () => addPushUps(50));
-        subtractOneBtn.addEventListener('click', () => addPushUps(-1));
-        subtractTenBtn.addEventListener('click', () => addPushUps(-10));
-        resetBtn.addEventListener('click', () => {
-            completedCount = 0;
-            updateDisplay();
-        });
-        setGoalBtn.addEventListener('click', () => {
-            goalInput.value = goal;
-            goalModal.show();
-        });
-        saveGoalBtn.addEventListener('click', () => {
-            const val = parseInt(goalInput.value, 10);
-            if (val > 0) {
-                goal = val;
-                if (completedCount > goal) completedCount = goal;
-                updateDisplay();
-                goalModal.hide();
-            }
-        });
-        themeSwitcher.addEventListener('click', () => {
-            const html = document.documentElement;
-            if (html.getAttribute('data-bs-theme') === 'light') {
-                html.setAttribute('data-bs-theme', 'dark');
-                themeSwitcher.textContent = '☀️';
-                document.body.style.background = 'linear-gradient(135deg, #18181b 0%, #6366f1 100%)';
-            } else {
-                html.setAttribute('data-bs-theme', 'light');
-                themeSwitcher.textContent = '🌙';
-                document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #6366f1 100%)';
-            }
-        });
-        shareBtn.addEventListener('click', async () => {
-            const shareData = {
-                title: 'Push Up Counter',
-                text: 'Join my TikTok Live Push Up Challenge!',
-                url: window.location.href
-            };
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                await navigator.clipboard.writeText(window.location.href);
-                shareBtn.textContent = 'Link Copied!';
-                setTimeout(() => shareBtn.textContent = 'Share Site', 2000);
-            }
-        });
-
-        // Screenshot only the push up counter area, not the navbar or warning
-        screenshotBtn.addEventListener('click', async () => {
-            screenshotBtn.disabled = true;
-            screenshotBtn.textContent = "Capturing...";
-            const target = document.getElementById('screenshotArea');
-            html2canvas(target, {
-                backgroundColor: "#0f172a",
-                useCORS: true,
-                scale: 2
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'pushup-counter-progress.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                screenshotBtn.textContent = "📸 Save Progress as Image";
-                screenshotBtn.disabled = false;
-            }).catch(() => {
-                alert('Screenshot failed. Try again.');
-                screenshotBtn.textContent = "📸 Save Progress as Image";
-                screenshotBtn.disabled = false;
-            });
-        });
-
-        // Username form submission
-        usernameForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const username = usernameInput.value.trim();
-            if (username) {
-                localStorage.setItem('username', username);
-                displayUsername.textContent = `Welcome, ${username}! 🎉`;
-                usernameInput.value = '';
-            }
-        });
-
-        // Load saved username
-        window.addEventListener('load', () => {
-            const savedUsername = localStorage.getItem('username');
-            if (savedUsername) {
-                displayUsername.textContent = `Welcome, ${savedUsername}! 🎉`;
-            }
-        });
-
-        // Initialize display
-        updateDisplay();
-    </script>
+    <script src="assets/js/logic.js"></script>
 </body>
 
 </html>
