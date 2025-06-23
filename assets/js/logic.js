@@ -6,25 +6,25 @@
             let theme = localStorage.getItem('pushupcounter_theme') || 'light';
             const motivationalMessages = [
                 "Keep going! You're crushing it!",
-                "Push through the burn—progress is made now!",
-                "Every rep counts. Make them matter!",
-                "Eyes on the prize—don't stop now!",
-                "You're unstoppable. Prove it to yourself!",
+                "Push through the burn!",
+                "Every rep counts.",
+                "Eyes on the prize!",
+                "You're unstoppable.",
                 "Almost there, keep pushing!",
-                "Feel the power in every push-up!",
+                "Feel the power!",
                 "You got this! Stay strong!",
-                "Stronger with every push-up. Consistency wins!",
-                "Your future self will thank you for today!",
-                "Push-ups today, strength tomorrow. Keep at it!",
-                "Consistency is key—show up for yourself!",
-                "You are stronger than you think. Believe it!",
-                "Believe in yourself and your progress!",
-                "Every push-up is a step closer to your goal!",
-                "Champions are made one rep at a time!",
+                "You are Strong!",
+                "Your future is bright!",
+                "Do Push-ups today!",
+                "Consistency is key!",
+                "You are Powerful!",
+                "Believe in yourself!",
+                "Every push-up counts!",
+                "Your are a champion!",
                 "Sweat now, shine later!",
-                "Small steps, big results. Keep moving!",
-                "Discipline beats motivation. Stay disciplined!",
-                "Greatness is built with effort—rep by rep!"
+                "Small steps, big results!",
+                "Discipline beats motivation.",
+                "Greatness is coming!"
             ];
 
             const completedCountEl = document.getElementById('completedCount');
