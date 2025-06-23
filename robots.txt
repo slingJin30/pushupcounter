@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /server.txt
+Allow: /
+
+Sitemap: /sitemap.xml

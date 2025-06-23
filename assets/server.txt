@@ -1,0 +1,10 @@
+version name = slingjin30-v1.0
+date created = 2025-06-23
+developer = slingjin30
+github repo = https://github.com/slingjin30/pushupcounter
+unique id = slingjin30-20250623
+
+# Server Information
+server port    = 8080
+environment    = production
+host           = countpushups.netlify.app
