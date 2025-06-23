@@ -250,7 +250,7 @@
 
             // --- Username Personalization ---
             if (username) {
-                displayUsername.textContent = 'Welcome, ' + '@' + username;
+                displayUsername.textContent = 'Welcome, ' + username;
                 usernameInput.value = username;
             } else {
                 displayUsername.textContent = '';
@@ -260,7 +260,7 @@
                 username = usernameInput.value.trim().replace(/\s+/g, '');
                 if (username.length > 0) {
                     setStorage('username', username);
-                    displayUsername.textContent = 'Welcome, ' + '@' + username;
+                    displayUsername.textContent = 'Welcome, ' + username;
                 } else {
                     displayUsername.textContent = '';
                     localStorage.removeItem('pushupcounter_username');
