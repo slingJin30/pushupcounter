@@ -21,7 +21,6 @@ A modern, customisable push-up counter web app for personal fitness tracking. Fe
 - **Live Demo:** Try it instantly at [countpushups.netlify.app](https://countpushups.netlify.app/)
 - **No Account Needed:** All features work without registration or sign-in.
 - **Data Privacy:** All your data stays on your device—nothing is uploaded or tracked.
-- **Works Offline:** Once loaded, the app works without an internet connection (download zip).
 - **Device Compatibility:** Fully functional on phones, tablets, laptops, and desktops.
 - **Progress Reset:** You can reset your progress and settings at any time.
 - **Screenshots:** Instantly save or share your progress with the built-in screenshot tool.
