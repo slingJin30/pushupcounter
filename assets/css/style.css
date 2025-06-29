@@ -42,8 +42,15 @@
     height: 1.5rem;
     border-radius: 50%;
     border: 2px solid transparent;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     padding: 0; /* Remove default button padding */
+}
+.accent-picker-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5); /* More prominent shadow on hover */
+}
+[data-bs-theme="light"] .accent-picker-btn:hover {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 .accent-picker-btn.active {
     border-color: #fff; /* White border for active accent on dark navbar */
@@ -112,8 +119,13 @@ body {
 
 /* --- Button Styles (General, then Theme Specific) --- */
         .btn { /* Base button transition */
-            transition: transform 0.1s, box-shadow 0.2s, background-color 0.2s, border-color 0.2s, color 0.2s;
+            transition: transform 0.15s ease-out, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, filter 0.2s ease;
         }
+        .btn:hover, .btn:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important; /* Ensure this shadow takes precedence */
+        }
+
         .btn-outline-primary,
         .btn-success,
         .btn-warning,
@@ -147,14 +159,22 @@ body {
             color: var(--accent-text-on-light); /* Default for light theme */
         }
         .btn-primary:hover {
-            /* Slightly darken or lighten the accent color on hover */
-            /* This often requires specific color values or a filter if you want to derive from CSS var */
-            /* For simplicity, we might use a slightly different shade or rely on Bootstrap's default hover effects if they are subtle enough */
-            filter: brightness(90%);
+            filter: brightness(110%); /* Make primary button slightly brighter */
         }
         [data-bs-theme="dark"] .btn-primary {
             color: var(--accent-text-on-dark); /* Ensure text color for dark theme */
         }
+        [data-bs-theme="dark"] .btn-primary:hover {
+            filter: brightness(115%); /* Dark theme buttons can often take more brightness */
+        }
+
+        .btn-success:hover { filter: brightness(105%); }
+        .btn-warning:hover { filter: brightness(105%); } /* Text color might need adjustment if bg gets too light */
+        .btn-danger:hover { filter: brightness(105%); } /* Careful with danger making it too light, maybe brightness(95%) or a color mix */
+        [data-bs-theme="light"] .btn-danger:hover { filter: brightness(90%); } /* Darken on light theme */
+        .btn-secondary:hover { filter: brightness(105%); }
+        [data-bs-theme="dark"] .btn-secondary:hover { filter: brightness(120%); } /* Secondary in BS dark is quite dark */
+        .btn-info:hover { filter: brightness(105%); }
 
 
         /* Other button variants (.btn-success, .btn-warning, etc.) will largely use Bootstrap's default theme adjustments.
@@ -211,7 +231,24 @@ body {
             font-size: 1.3rem;
             font-weight: 700;
             margin: 0.75rem 0;
+            /* Animation will be triggered by JS adding a class */
         }
+
+        .motivational.animate-new-message {
+            animation: fadeInSlideUp 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         [data-bs-theme="dark"] .motivational {
             color: var(--accent-color-light); /* Lighter accent for motivational text in dark */
             text-shadow: 0 1px 4px color-mix(in srgb, var(--accent-color) 50%, #000);

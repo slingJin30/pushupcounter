@@ -130,7 +130,7 @@
 
             function applyAccentColor(accentName) {
                 if (!accentColors[accentName]) {
-                    console.warn(`Accent color ${accentName} not found. Defaulting to indigo.`);
+                    console.warn(`Accent colour ${accentName} not found. Defaulting to indigo.`);
                     accentName = 'indigo';
                 }
                 const { main, light } = accentColors[accentName];
@@ -238,9 +238,17 @@
                 void completedCountEl.offsetWidth; // Trigger reflow
                 completedCountEl.classList.add('pop');
 
-                motivationalMsgEl.textContent = currentEx.count >= currentEx.goal
+                const newMessage = currentEx.count >= currentEx.goal
                     ? "Goal reached! 🎉 Set a new one!"
                     : randomMotivation();
+
+                // Only update and animate if the message is different or it's the initial load
+                if (motivationalMsgEl.textContent !== newMessage || !motivationalMsgEl.classList.contains('animate-new-message')) {
+                    motivationalMsgEl.textContent = newMessage;
+                    motivationalMsgEl.classList.remove('animate-new-message');
+                    void motivationalMsgEl.offsetWidth; // Trigger reflow
+                    motivationalMsgEl.classList.add('animate-new-message');
+                }
 
                 // Update button states (e.g., disable add if at max_count for THIS exercise)
                  const addBtns = [addOneBtn, addFiveBtn, addTenBtn, addFiftyBtn];
@@ -542,7 +550,7 @@
                 // Dynamically set background for html2canvas based on current theme
                 const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
                 const screenshotBgColor = currentTheme === 'dark' ?
-                    getComputedStyle(document.documentElement).getPropertyValue('--dark-card-bg').trim() || '#1e293b' : // Fallback to a dark color
+                    getComputedStyle(document.documentElement).getPropertyValue('--dark-card-bg').trim() || '#1e293b' : // Fallback to a dark colour
                     getComputedStyle(document.documentElement).getPropertyValue('--light-card-bg').trim() || '#ffffff'; // Fallback to white
 
                 html2canvas(target, {
