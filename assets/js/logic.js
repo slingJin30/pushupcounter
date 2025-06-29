@@ -313,6 +313,8 @@
                 // Generate Bitcoin QR Code
                 const btcAddressEl = document.getElementById('bitcoinAddress');
                 const btcQrCodeEl = document.getElementById('bitcoinQrCode');
+                const copyBitcoinAddressBtn = document.getElementById('copyBitcoinAddressBtn');
+
                 if (btcAddressEl && btcQrCodeEl && typeof QRCode !== 'undefined') {
                     const btcAddress = btcAddressEl.textContent.trim();
                     if (btcAddress) {
@@ -324,6 +326,30 @@
                             colorLight : "#ffffff",
                             correctLevel : QRCode.CorrectLevel.H
                         });
+
+                        if (copyBitcoinAddressBtn) {
+                            copyBitcoinAddressBtn.addEventListener('click', async () => {
+                                try {
+                                    await navigator.clipboard.writeText(btcAddress);
+                                    const originalText = copyBitcoinAddressBtn.innerHTML;
+                                    copyBitcoinAddressBtn.innerHTML = `Copied! <i class="bi bi-check-lg"></i>`;
+                                    copyBitcoinAddressBtn.disabled = true;
+
+                                    setTimeout(() => {
+                                        copyBitcoinAddressBtn.innerHTML = originalText;
+                                        copyBitcoinAddressBtn.disabled = false;
+                                    }, 2500);
+                                } catch (err) {
+                                    console.error('Failed to copy Bitcoin address: ', err);
+                                    // Optionally, provide feedback to the user that copy failed
+                                    const originalText = copyBitcoinAddressBtn.innerHTML;
+                                    copyBitcoinAddressBtn.innerHTML = `Copy Failed`;
+                                     setTimeout(() => {
+                                        copyBitcoinAddressBtn.innerHTML = originalText;
+                                    }, 2500);
+                                }
+                            });
+                        }
                     }
                 } else {
                     console.warn("Bitcoin QR Code elements not found or QRCode library not loaded.");
