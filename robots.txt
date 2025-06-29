@@ -2,4 +2,4 @@ User-agent: *
 Disallow: /server.txt
 Allow: /
 
-Sitemap: /sitemap.xml
+Sitemap: https://countpushups.netlify.app/sitemap.xml
