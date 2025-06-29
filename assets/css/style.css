@@ -1,60 +1,167 @@
+/* --- General Styles --- */
+:root {
+    --light-bg-gradient: linear-gradient(135deg, #0f172a 0%, #6366f1 100%);
+    --dark-bg-gradient: linear-gradient(135deg, #18181b 0%, #232946 100%); /* Darker gradient for dark theme */
+
+    --light-text-color: #212529; /* Bootstrap default text color */
+    --dark-text-color: #f8f9fa;  /* Bootstrap default dark theme text color */
+
+    --light-card-bg: rgba(255, 255, 255, 0.95);
+    --dark-card-bg: rgba(30, 41, 59, 0.95); /* #1e293b */
+
+    --light-modal-bg: #fff;
+    --dark-modal-bg: #1e293b; /* Darker modal */
+    --dark-modal-header-border: #343a40;
+
+    --light-form-control-bg: #fff;
+    --light-form-control-color: #1e293b;
+    --dark-form-control-bg: #2b3035; /* Darker form control */
+    --dark-form-control-color: #fff;
+    --dark-form-control-border: #495057;
+
+    /* Accent Color Variables - Default to Indigo */
+    --accent-color: #6366f1; /* Indigo */
+    --accent-color-light: #a5b4fc; /* Lighter Indigo */
+    --accent-text-on-dark: #fff;
+    --accent-text-on-light: #fff;
+
+    /* Predefined Accent Options */
+    --accent-indigo: #6366f1;
+    --accent-indigo-light: #a5b4fc;
+    --accent-green: #10b981; /* Tailwind Green 500 */
+    --accent-green-light: #6ee7b7; /* Tailwind Green 300 */
+    --accent-orange: #f97316; /* Tailwind Orange 500 */
+    --accent-orange-light: #fdba74; /* Tailwind Orange 300 */
+    --accent-purple: #8b5cf6; /* Tailwind Violet 500 */
+    --accent-purple-light: #c4b5fd; /* Tailwind Violet 300 */
+}
+
+/* Accent Picker Button Styles */
+.accent-picker-btn {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+    padding: 0; /* Remove default button padding */
+}
+.accent-picker-btn.active {
+    border-color: #fff; /* White border for active accent on dark navbar */
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+[data-bs-theme="light"] .accent-picker-btn.active {
+    border-color: #333; /* Darker border for active accent on potentially light navbar (if navbar theme changes) */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+
 body {
-            background: linear-gradient(135deg, #18181b 0%, #6366f1 100%);
-            font-family: 'Lato', Arial, sans-serif;
-            min-height: 100vh;
-            color: #fff;
-        }
+    font-family: 'Lato', Arial, sans-serif;
+    min-height: 100vh;
+    background: var(--light-bg-gradient);
+    color: var(--light-text-color);
+    transition: background 0.3s ease, color 0.3s ease;
+}
 
-        .custom-navbar {
-            background: linear-gradient(90deg, rgba(30, 41, 59, 0.92) 0%, rgba(99, 102, 241, 0.85) 100%);
-            backdrop-filter: blur(8px);
-            border-radius: 0 0 1.5rem 1.5rem;
-            box-shadow: 0 4px 24px rgba(99, 102, 241, 0.10);
-            border-bottom: 2px solid #6366f1;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+[data-bs-theme="dark"] body {
+    background: var(--dark-bg-gradient);
+    color: var(--dark-text-color);
+}
 
-        .navbar-brand span {
-            font-family: 'Montserrat', 'Bebas Neue', Arial, sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #fff;
-        }
 
-        .navbar-brand span:last-child {
-            letter-spacing: 2px;
-            font-size: 2rem;
-            font-weight: 800;
-        }
+.custom-navbar {
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 0 0 1.5rem 1.5rem;
+    box-shadow: 0 4px 24px rgba(0,0,0, 0.10); /* Shadow less reliant on accent */
+    border-bottom: 2px solid var(--accent-color); /* Use accent color for border */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.custom-navbar .navbar-brand span:last-child { /* For "Push Up Counter" text */
+    text-shadow: 0 2px 8px var(--accent-color); /* Use accent for text shadow */
+}
 
-        .theme-switcher {
-            cursor: pointer;
-            font-size: 2rem;
-            transition: color 0.2s;
-        }
 
-        .theme-switcher:hover {
-            color: #ffd700;
-            text-shadow: 0 2px 8px #6366f1;
-        }
+.navbar-brand span {
+    font-family: 'Montserrat', 'Bebas Neue', Arial, sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent-text-on-dark);
+}
 
+.navbar-brand span:last-child {
+    letter-spacing: 2px;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.theme-switcher {
+    cursor: pointer;
+    font-size: 2rem;
+    color: var(--accent-text-on-dark);
+    transition: color 0.2s;
+}
+
+.theme-switcher:hover {
+    color: #ffd700;
+    text-shadow: 0 2px 8px var(--accent-color);
+}
+
+/* --- Button Styles (General, then Theme Specific) --- */
+        .btn { /* Base button transition */
+            transition: transform 0.1s, box-shadow 0.2s, background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
         .btn-outline-primary,
         .btn-success,
         .btn-warning,
         .btn-secondary,
         .btn-primary,
         .btn-danger {
-            font-size: 1rem; /* Adjusted font size for general buttons */
+            font-size: 1rem;
             font-weight: 700;
-            border-radius: 0.75rem; /* Standardized border radius */
-            padding: 0.75rem 1rem; /* Adjusted padding for better touch */
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
-            transition: transform 0.1s, box-shadow 0.2s;
-            margin: 0.25rem; /* Add small margin for spacing when wrapped */
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Generic shadow */
+            margin: 0.25rem;
         }
+        /* Primary outline button should use accent color */
+        .btn-outline-primary { /* Default state for both themes */
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        .btn-outline-primary:hover { /* Default hover for both themes */
+            background-color: var(--accent-color);
+            color: var(--accent-text-on-light); /* Text color on solid accent bg */
+        }
+        [data-bs-theme="dark"] .btn-outline-primary:hover {
+             color: var(--accent-text-on-dark); /* Text color on solid accent bg for dark */
+        }
+
+        /* Ensure .btn-primary also uses the accent color */
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--accent-text-on-light); /* Default for light theme */
+        }
+        .btn-primary:hover {
+            /* Slightly darken or lighten the accent color on hover */
+            /* This often requires specific color values or a filter if you want to derive from CSS var */
+            /* For simplicity, we might use a slightly different shade or rely on Bootstrap's default hover effects if they are subtle enough */
+            filter: brightness(90%);
+        }
+        [data-bs-theme="dark"] .btn-primary {
+            color: var(--accent-text-on-dark); /* Ensure text color for dark theme */
+        }
+
+
+        /* Other button variants (.btn-success, .btn-warning, etc.) will largely use Bootstrap's default theme adjustments.
+           We can add specific overrides if Bootstrap's dark theme isn't satisfactory for them,
+           or if we want them to also subtly pick up the accent. For now, keeping them standard. */
+
+
         /* Ensure buttons in a group don't have double margins */
         .btn-group > .btn {
             margin: 0;
@@ -70,84 +177,151 @@ body {
         }
 
         .btn-sm {
-            font-size: 0.85rem; /* Smaller font size for small buttons */
-            padding: 0.35rem 0.8rem; /* Smaller padding for small buttons */
-            border-radius: 0.6rem; /* Slightly smaller border radius */
+            font-size: 0.85rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 0.6rem;
         }
 
+        /* --- Counter & Motivational Text --- */
         .counter-display {
             font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif;
-            font-size: 6rem; /* Adjusted font size */
+            font-size: 6rem;
             font-weight: 900;
-            color: #fff;
-            text-shadow: 0 4px 28px #6366f1, 0 2px 0 #fff; /* Adjusted text shadow */
-            letter-spacing: 0.08em; /* Adjusted letter spacing */
-            margin-bottom: 0.25rem; /* Adjusted margin */
+            letter-spacing: 0.08em;
+            margin-bottom: 0.25rem;
             animation: pop 0.4s;
+            color: var(--accent-color); /* Use accent for the numbers */
+            /* Dynamic text shadow based on theme might be complex with current accent vars */
+        }
+        [data-bs-theme="dark"] .counter-display {
+            text-shadow: 0 4px 28px var(--accent-color), 0 2px 0 #fff;
+        }
+        [data-bs-theme="light"] .counter-display {
+             text-shadow: 0 2px 10px color-mix(in srgb, var(--accent-color) 40%, transparent), 0 1px 0 #555;
         }
 
-        @keyframes pop {
-            0% {
-                transform: scale(1.05); /* Adjusted pop effect */
-            }
 
-            100% {
-                transform: scale(1);
-            }
+        @keyframes pop {
+            0% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .motivational {
             font-family: 'Montserrat', 'Lato', Arial, sans-serif;
-            font-size: 1.3rem; /* Adjusted font size */
+            font-size: 1.3rem;
             font-weight: 700;
-            color: #a5b4fc;
-            margin: 0.75rem 0; /* Adjusted margin */
-            text-shadow: 0 2px 6px #6366f1; /* Adjusted text shadow */
+            margin: 0.75rem 0;
+        }
+        [data-bs-theme="dark"] .motivational {
+            color: var(--accent-color-light); /* Lighter accent for motivational text in dark */
+            text-shadow: 0 1px 4px color-mix(in srgb, var(--accent-color) 50%, #000);
+        }
+        [data-bs-theme="light"] .motivational {
+            color: color-mix(in srgb, var(--accent-color) 80%, #000); /* Darker shade of accent for light */
+            text-shadow: none;
         }
 
+
+        /* --- Progress Bar --- */
         .progress {
-            height: 2.2rem; /* Adjusted height */
-            background: #1e293b;
-            border-radius: 1.2rem; /* Adjusted border radius */
+            height: 2.2rem;
+            border-radius: 1.2rem;
             overflow: hidden;
-            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.12); /* Adjusted box shadow */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        [data-bs-theme="light"] .progress {
+            background: #e9ecef; /* Light background for progress area */
+        }
+        [data-bs-theme="dark"] .progress {
+            background: #101520; /* Darker background for progress area */
         }
 
-        .progress-bar {
-            font-size: 1.1rem; /* Adjusted font size */
+        .progress-bar { /* Common styles for progress bar */
+            font-size: 1.1rem;
             font-weight: 700;
-            background: linear-gradient(90deg, #6366f1 0%, #a5b4fc 100%);
-            color: #fff;
-            text-shadow: 0 2px 6px #6366f1; /* Adjusted text shadow */
-            border-radius: 1.2rem; /* Adjusted border radius */
+            color: var(--accent-text-on-light);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            border-radius: 1.2rem;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color-light) 100%);
             transition: width 0.4s cubic-bezier(.4, 2, .6, 1);
         }
 
+        /* --- Modal --- */
         .modal-content {
-            background: #1e293b;
-            color: #fff;
-            border-radius: 1.2rem; /* Adjusted border radius */
-            box-shadow: 0 2px 20px #6366f1; /* Adjusted box shadow */
-        }
-
-        .modal-header,
-        .modal-footer {
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
             border: none;
         }
+        [data-bs-theme="light"] .modal-content {
+            background: var(--light-modal-bg);
+            color: var(--light-text-color);
+        }
+        [data-bs-theme="dark"] .modal-content {
+            background: var(--dark-modal-bg);
+            color: var(--dark-text-color);
+        }
+        [data-bs-theme="dark"] .modal-header {
+            border-bottom: 1px solid var(--dark-modal-header-border);
+        }
+        [data-bs-theme="dark"] .btn-close { /* Bootstrap's default dark theme for btn-close is usually fine */
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
 
+
+        /* --- Form Controls --- */
         .form-control {
-            border-radius: 0.8rem; /* Adjusted border radius */
-            font-size: 1.1rem; /* Adjusted font size */
-            background: #fff;
-            color: #1e293b;
+            border-radius: 0.8rem;
+            font-size: 1.1rem;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
         }
-        .form-control-sm {
-            font-size: 0.9rem; /* Smaller font size for small form controls */
-            padding: 0.4rem 0.8rem; /* Smaller padding */
-            border-radius: 0.6rem; /* Slightly smaller border radius */
+        [data-bs-theme="light"] .form-control {
+            background: var(--light-form-control-bg);
+            color: var(--light-form-control-color);
+            border: 1px solid #ced4da;
+        }
+        [data-bs-theme="dark"] .form-control {
+            background: var(--dark-form-control-bg);
+            color: var(--dark-form-control-color);
+            border: 1px solid var(--dark-form-control-border);
+        }
+        [data-bs-theme="dark"] .form-control::placeholder {
+            color: #6c757d;
+        }
+        [data-bs-theme="dark"] .form-label {
+            color: var(--dark-text-color);
+        }
+
+        .form-control-sm { /* Specifics for sm should inherit themed changes */
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.6rem;
+        }
+
+        /* --- Screenshot Area Specifics --- */
+        #screenshotArea { /* This is the main card-like element */
+            background: var(--light-card-bg);
+            color: var(--light-text-color); /* Text inside screenshot area */
+            border-radius: 2rem;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        [data-bs-theme="dark"] #screenshotArea {
+            background: var(--dark-card-bg);
+            color: var(--dark-text-color); /* Text inside screenshot area for dark mode */
+        }
+        [data-bs-theme="dark"] #screenshotArea .form-label { /* Ensure labels inside are dark-theme compliant */
+             color: var(--dark-text-color);
+        }
+        [data-bs-theme="dark"] #displayUsername {
+            color: var(--accent-color-light);
+        }
+        [data-bs-theme="light"] #displayUsername {
+            color: var(--accent-color);
         }
 
 
+        /* --- Media Queries (adjustments as needed) --- */
         @media (max-width: 768px) {
             .counter-display {
                 font-size: 3rem; /* Adjusted for smaller screens */
@@ -202,97 +376,89 @@ body {
             touch-action: manipulation;
         }
 
-        #shareBtn { /* Styles for the share button, now in footer */
-            background: linear-gradient(90deg, #818cf8 0%, #6366f1 100%);
-            color: #fff;
+        #shareBtn {
+            background: linear-gradient(90deg, var(--accent-color-light) 0%, var(--accent-color) 100%);
+            color: var(--accent-text-on-dark);
             border: none;
-            font-weight: 600; /* Adjusted font weight */
-            border-radius: 1.5rem; /* Adjusted border radius */
-            box-shadow: 0 2px 6px rgba(99,102,241,0.15); /* Adjusted box shadow */
-            padding: 0.5rem 1.2rem; /* Adjusted padding for a smaller button */
+            font-weight: 600;
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            padding: 0.5rem 1.2rem;
             transition: background 0.2s, color 0.2s, box-shadow 0.2s;
         }
 
         #shareBtn:hover, #shareBtn:focus {
-            background: linear-gradient(90deg, #a5b4fc 0%, #818cf8 100%);
-            color: #fff;
-            box-shadow: 0 3px 12px rgba(99,102,241,0.22); /* Adjusted hover shadow */
+            background: linear-gradient(90deg, color-mix(in srgb, var(--accent-color-light) 80%, #fff) 0%, color-mix(in srgb, var(--accent-color) 80%, #fff) 100%);
+            color: var(--accent-text-on-dark);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.22);
             outline: none;
         }
 
-        footer .btn-outline-light.btn-sm { /* Specificity for footer download button */
+        footer {
+            background: linear-gradient(90deg, var(--accent-color) 0%, color-mix(in srgb, var(--accent-color) 70%, #000) 100%);
+            color: var(--accent-text-on-dark);
+            font-size:1.1rem;
+            font-weight:600;
+            letter-spacing:0.5px;
+            border-radius: 1.5rem 1.5rem 0 0;
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.15);
+            margin-top:2rem;
+        }
+        footer span, footer a {
+            color: var(--accent-text-on-dark) !important;
+        }
+        footer a:hover {
+            color: #ffd700 !important;
+        }
+        footer .btn-outline-light.btn-sm {
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
+            color: var(--accent-text-on-dark);
+            border-color: var(--accent-text-on-dark);
+        }
+        footer .btn-outline-light.btn-sm:hover {
+            background-color: var(--accent-text-on-dark);
+            color: var(--accent-color);
         }
 
 
-        /* --- Donate Section Redesign (already good, minor adjustments if needed) --- */
+        /* --- Donate Section --- */
+        /* This section has its own explicit dark background styling, so it should be fine.
+           We just need to ensure text colors inside it are consistently light. */
         .donate-card {
-            background: linear-gradient(120deg, #232946 0%, #6366f1 100%);
+            background: linear-gradient(120deg, #1f2937 0%, #3730a3 100%); /* Darker gradient */
             border-radius: 1.5rem;
-            box-shadow: 0 6px 32px rgba(99,102,241,0.13), 0 1.5px 8px rgba(30,41,59,0.07);
+            box-shadow: 0 6px 32px rgba(0,0,0,0.13), 0 1.5px 8px rgba(0,0,0,0.07);
             padding: 2.2rem 2.2rem 1.7rem 2.2rem;
             max-width: 540px;
             margin-top: 2rem;
             margin-bottom: 2rem;
-            color: #fff;
+            color: var(--dark-text-color); /* Ensure text is light */
             position: relative;
             overflow: hidden;
         }
-
-        .donate-card::before {
+        .donate-card::before { /* Decorative element */
             content: "";
             position: absolute;
             top: -40px;
             right: -40px;
             width: 120px;
             height: 120px;
-            background: radial-gradient(circle, #fbbf24 0%, #6366f1 80%);
+            background: radial-gradient(circle, #fbbf24 0%, var(--accent-color) 80%);
             opacity: 0.12;
             z-index: 0;
             border-radius: 50%;
         }
-
-        .donate-content {
-            position: relative;
-            z-index: 1;
-            gap: 2rem;
-        }
-
-        .donate-logo {
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(99,102,241,0.10);
-            background: #fff;
-            object-fit: contain;
-            border: 2.5px solid #fbbf24;
-            margin-right: 0.8rem;
-        }
-
         .donate-title {
-            font-size: 1.25rem;
-            color: #fff;
-            letter-spacing: 0.5px;
-            font-weight: 700;
-            margin-bottom: 0.2rem;
+            color: var(--dark-text-color);
         }
-
         .donate-desc {
-            font-size: 1.05rem;
-            color: #c7d2fe;
-            margin-bottom: 0.2rem;
-            font-weight: 500;
+            color: #c7d2fe; /* Light blue, good contrast on dark */
         }
-
-        .donate-actions {
-            gap: 1.1rem;
-            margin-top: 0.5rem;
-        }
-
-        .donate-btn-coffee {
+        .donate-btn-coffee { /* This button has specific bright styling */
             background: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%);
-            color: #232946;
+            color: #1f2937; /* Dark text for contrast on yellow button */
+            /* ... rest of .donate-btn-coffee styles ... */
             font-weight: 800;
             border: none;
             border-radius: 2rem;
@@ -305,41 +471,46 @@ body {
             gap: 0.5rem;
             transition: background 0.18s, color 0.18s, box-shadow 0.18s;
         }
-
         .donate-btn-coffee:hover,
         .donate-btn-coffee:focus {
             background: linear-gradient(90deg, #fde68a 0%, #fbbf24 100%);
-            color: #232946;
+            color: #1f2937;
             box-shadow: 0 4px 16px rgba(251,191,36,0.19);
             outline: none;
         }
-
         .donate-or {
             color: #a5b4fc;
-            font-weight: 600;
-            margin: 0 0.5rem;
-            font-size: 1.05rem;
         }
-
         .donate-btc-label {
-            color: #fbbf24;
-            font-weight: 700;
-            margin-right: 0.2rem;
-            font-size: 1.05rem;
+            color: #fbbf24; /* Yellow for BTC label */
         }
-
-        .donate-btc {
-            background: #fff;
-            color: #f59e42;
+        .donate-btc { /* BTC address display */
+            background: #fff; /* Light background for readability */
+            color: #f59e42; /* Orange text */
+            /* ... rest of .donate-btc styles ... */
             border-radius: 0.5rem;
             padding: 0.22rem 0.7rem;
             font-size: 1.02rem;
             font-family: 'Fira Mono', 'Consolas', monospace;
-            box-shadow: 0 1px 4px rgba(99,102,241,0.09);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.09);
             font-weight: 700;
             letter-spacing: 0.5px;
         }
 
+        /* Alert warning - ensure it's themed */
+        [data-bs-theme="light"] .alert-warning {
+            color: #664d03;
+            background-color: #fff3cd;
+            border-color: #ffecb5;
+        }
+        [data-bs-theme="dark"] .alert-warning {
+            color: #ffc107; /* Brighter yellow text for dark theme */
+            background-color: #332701; /* Darker yellow background */
+            border-color: #664d03; /* Darker yellow border */
+        }
+
+
+        /* Media query adjustments for donate card (mostly layout, colors should be fine) */
         @media (max-width: 600px) {
             .donate-card {
                 padding: 1.2rem 0.7rem 1.1rem 0.7rem;
@@ -349,11 +520,7 @@ body {
                 gap: 1.1rem;
                 align-items: flex-start !important;
             }
-            .donate-logo {
-                width: 40px;
-                height: 40px;
-                margin-right: 0.5rem;
-            }
+            /* .donate-logo styling is fine */
             .donate-actions {
                 flex-direction: column !important;
                 align-items: flex-start !important;

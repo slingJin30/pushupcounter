@@ -1,12 +1,19 @@
 (function () {
-            // --- State and Elements ---
-            let completedCount = Number(localStorage.getItem('pushupcounter_completedCount')) || 0;
-            let goal = Number(localStorage.getItem('pushupcounter_goal')) || 2500;
-            let username = localStorage.getItem('pushupcounter_username') || '';
-            let theme = localStorage.getItem('pushupcounter_theme') || 'light';
-            const motivationalMessages = [
-                "Keep going! You're crushing it!",
-                "Push through the burn!",
+    // --- Constants ---
+    const MAX_COUNT = 999999;
+    const MAX_GOAL = 999999;
+    const DEFAULT_EXERCISE_NAME = "Push Ups";
+
+    // --- State Variables ---
+    let exercises = [];
+    let currentExerciseIndex = 0;
+    let username = '';
+    let theme = 'light';
+    let currentAccentColor = 'indigo'; // Default accent color
+
+    const motivationalMessages = [
+        "Keep going! You're crushing it!",
+        "Push through the burn!",
                 "Every rep counts.",
                 "Eyes on the prize!",
                 "You're unstoppable.",
@@ -30,6 +37,9 @@
             const completedCountEl = document.getElementById('completedCount');
             const progressBarEl = document.getElementById('progressBar');
             const motivationalMsgEl = document.getElementById('motivationalMsg');
+            const exerciseDropdownBtn = document.getElementById('exerciseDropdownBtn');
+            const exerciseListUl = document.getElementById('exerciseList');
+            const addNewExerciseBtn = document.getElementById('addNewExerciseBtn');
             const addOneBtn = document.getElementById('addOneBtn');
             const addFiveBtn = document.getElementById('addFiveBtn');
             const addTenBtn = document.getElementById('addTenBtn');
@@ -49,61 +59,242 @@
             const usernameInput = document.getElementById('usernameInput');
             const displayUsername = document.getElementById('displayUsername');
             const ytMusicBtn = document.getElementById('ytMusicBtn');
+            const accentColorSelector = document.getElementById('accentColorSelector');
+
+            // --- Accent Color Definitions ---
+            const accentColors = {
+                indigo: { main: '#6366f1', light: '#a5b4fc' },
+                green: { main: '#10b981', light: '#6ee7b7' },
+                orange: { main: '#f97316', light: '#fdba74' },
+                purple: { main: '#8b5cf6', light: '#c4b5fd' }
+            };
 
             // --- Utility Functions ---
-            function setStorage(key, value) {
-                try { localStorage.setItem('pushupcounter_' + key, value); } catch (e) {}
-            }
-            function getStorage(key, fallback) {
-                try {
-                    const val = localStorage.getItem('pushupcounter_' + key);
-                    if (val === null) return fallback;
-                    if (!isNaN(fallback)) return Number(val);
-                    return val;
-                } catch (e) { return fallback; }
-            }
+            // --- Local Storage Abstraction ---
+            const storage = {
+                prefix: 'pushupcounter_',
+                setItem: function(key, value) {
+                    try {
+                        localStorage.setItem(this.prefix + key, JSON.stringify(value));
+                    } catch (e) {
+                        console.error("Error saving to localStorage:", key, e);
+                        // alert("Could not save settings. Your browser's local storage might be full or disabled.");
+                    }
+                },
+                getItem: function(key, fallback) {
+                    try {
+                        const val = localStorage.getItem(this.prefix + key);
+                        return val === null ? fallback : JSON.parse(val);
+                    } catch (e) {
+                        console.error("Error reading from localStorage:", key, e);
+                        return fallback;
+                    }
+                }
+            };
+
+            // --- Utility Functions ---
             function haptic() {
-                if (window.navigator.vibrate) window.navigator.vibrate(30);
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(30);
+                }
             }
+
             function randomMotivation() {
                 return motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
             }
-            function updateDisplay() {
-                completedCountEl.textContent = completedCount;
-                const percent = Math.min(100, (completedCount / goal) * 100);
-                progressBarEl.style.width = percent + '%';
-                progressBarEl.textContent = completedCount + ' / ' + goal;
-                completedCountEl.classList.remove('pop');
-                void completedCountEl.offsetWidth;
-                completedCountEl.classList.add('pop');
-                motivationalMsgEl.textContent = completedCount >= goal
-                    ? "Goal reached! 🎉 Set a new one!"
-                    : randomMotivation();
-                setStorage('completedCount', completedCount);
-                setStorage('goal', goal);
-            }
+
             function playSound() {
                 try {
                     pushupSound.currentTime = 0;
-                    pushupSound.play();
-                } catch (e) {}
+                    pushupSound.play().catch(e => console.warn("Audio play failed:", e)); // Catch promise rejection
+                } catch (e) {
+                    console.warn("Audio play error:", e);
+                }
             }
 
             // --- Theme Handling ---
-            function applyTheme(theme) {
+            function applyTheme(newTheme) {
                 const html = document.documentElement;
-                if (theme === 'dark') {
-                    html.setAttribute('data-bs-theme', 'dark');
-                    themeSwitcher.textContent = '☀️';
-                    document.body.style.background = 'linear-gradient(135deg, #18181b 0%, #6366f1 100%)';
+                html.setAttribute('data-bs-theme', newTheme);
+                if (newTheme === 'dark') {
+                    themeSwitcher.textContent = '☀️'; // Sun icon for dark mode (to switch to light)
+                    // Body background is now primarily controlled by CSS using [data-bs-theme="dark"]
                 } else {
-                    html.setAttribute('data-bs-theme', 'light');
-                    themeSwitcher.textContent = '🌙';
-                    document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #6366f1 100%)';
+                    themeSwitcher.textContent = '🌙'; // Moon icon for light mode (to switch to dark)
+                    // Body background is now primarily controlled by CSS using [data-bs-theme="light"] or default
+                }
+                // Update the global theme variable
+                theme = newTheme;
+                storage.setItem('theme', theme);
+            }
+
+            function applyAccentColor(accentName) {
+                if (!accentColors[accentName]) {
+                    console.warn(`Accent color ${accentName} not found. Defaulting to indigo.`);
+                    accentName = 'indigo';
+                }
+                const { main, light } = accentColors[accentName];
+                document.documentElement.style.setProperty('--accent-color', main);
+                document.documentElement.style.setProperty('--accent-color-light', light);
+
+                // Update body class for potential specific overrides if needed elsewhere
+                // Remove old accent classes
+                for (const color in accentColors) {
+                    document.body.classList.remove(`accent-${color}`);
+                }
+                // Add new accent class
+                document.body.classList.add(`accent-${accentName}`);
+
+                currentAccentColor = accentName;
+                storage.setItem('accentColor', currentAccentColor);
+            }
+
+            // --- Exercise Data Management ---
+            function createNewExercise(name) {
+                return {
+                    name: name,
+                    count: 0,
+                    goal: 2500 // Default goal for a new exercise
+                };
+            }
+
+            function saveExercises() {
+                storage.setItem('exercises', exercises);
+                storage.setItem('currentExerciseIndex', currentExerciseIndex);
+            }
+
+            function loadExercises() {
+                exercises = storage.getItem('exercises', []);
+                currentExerciseIndex = storage.getItem('currentExerciseIndex', 0);
+
+                if (exercises.length === 0) {
+                    exercises.push(createNewExercise(DEFAULT_EXERCISE_NAME));
+                    currentExerciseIndex = 0;
+                }
+                // Ensure currentExerciseIndex is valid
+                if (currentExerciseIndex >= exercises.length || currentExerciseIndex < 0) {
+                    currentExerciseIndex = 0;
                 }
             }
-            // Apply saved theme on load
-            applyTheme(theme);
+
+            // --- UI Update Functions ---
+            function updateExerciseDropdown() {
+                exerciseListUl.innerHTML = ''; // Clear existing items
+                exercises.forEach((ex, index) => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.classList.add('dropdown-item');
+                    a.href = '#';
+                    a.textContent = ex.name;
+                    if (index === currentExerciseIndex) {
+                        a.classList.add('active');
+                        exerciseDropdownBtn.textContent = ex.name; // Update dropdown button text
+                    }
+                    a.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        switchExercise(index);
+                    });
+                    li.appendChild(a);
+                    exerciseListUl.appendChild(li);
+                });
+                // Add separator and "Add New" button
+                const divider = document.createElement('li');
+                divider.innerHTML = '<hr class="dropdown-divider">';
+                exerciseListUl.appendChild(divider);
+                const addNewLi = document.createElement('li');
+                addNewLi.innerHTML = `<a class="dropdown-item" href="#" id="addNewExerciseBtnListener"><i class="bi bi-plus-circle-fill me-2"></i>Add New Exercise</a>`;
+                exerciseListUl.appendChild(addNewLi);
+                // Re-attach event listener for the new "Add New Exercise" button
+                document.getElementById('addNewExerciseBtnListener').addEventListener('click', handleAddNewExercise);
+            }
+
+
+            function updateDisplay() {
+                if (!exercises[currentExerciseIndex]) return; // Should not happen if initialized correctly
+
+                const currentEx = exercises[currentExerciseIndex];
+                completedCountEl.textContent = currentEx.count;
+                const percent = Math.min(100, (currentEx.count / currentEx.goal) * 100);
+                progressBarEl.style.width = percent + '%';
+                progressBarEl.textContent = `${currentEx.count} / ${currentEx.goal}`;
+
+                completedCountEl.classList.remove('pop');
+                void completedCountEl.offsetWidth; // Trigger reflow
+                completedCountEl.classList.add('pop');
+
+                motivationalMsgEl.textContent = currentEx.count >= currentEx.goal
+                    ? "Goal reached! 🎉 Set a new one!"
+                    : randomMotivation();
+
+                // Update button states (e.g., disable add if at max_count for THIS exercise)
+                 const addBtns = [addOneBtn, addFiveBtn, addTenBtn, addFiftyBtn];
+                 addBtns.forEach(btn => {
+                    btn.disabled = currentEx.count >= MAX_COUNT;
+                 });
+                saveExercises(); // Save state whenever display updates
+            }
+
+            function switchExercise(index) {
+                if (index >= 0 && index < exercises.length) {
+                    currentExerciseIndex = index;
+                    updateExerciseDropdown(); // Update active state in dropdown
+                    updateDisplay(); // Refresh main display for the new exercise
+                    // Update goal modal input if it's open or when it's next opened
+                    goalInput.value = exercises[currentExerciseIndex].goal;
+                }
+            }
+
+
+            // --- Initialization Function ---
+            function initializeApp() {
+                // Load data
+                username = storage.getItem('username', '');
+                theme = storage.getItem('theme', 'light');
+                currentAccentColor = storage.getItem('accentColor', 'indigo');
+                loadExercises();
+
+                // Apply theme and accent
+                applyTheme(theme);
+                applyAccentColor(currentAccentColor);
+
+                // Populate Accent Color Selector
+                for (const colorName in accentColors) {
+                    const btn = document.createElement('button');
+                    btn.classList.add('btn', 'btn-sm', 'accent-picker-btn');
+                    btn.style.backgroundColor = accentColors[colorName].main;
+                    btn.dataset.accent = colorName;
+                    btn.title = `Switch to ${colorName.charAt(0).toUpperCase() + colorName.slice(1)} accent`;
+                    if (colorName === currentAccentColor) {
+                        btn.classList.add('active');
+                    }
+                    btn.addEventListener('click', () => {
+                        applyAccentColor(colorName);
+                        // Update active class on buttons
+                        accentColorSelector.querySelectorAll('.accent-picker-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                    accentColorSelector.appendChild(btn);
+                }
+
+
+                // Initialize UI components
+                if (username) {
+                    displayUsername.textContent = 'Welcome, ' + username;
+                    usernameInput.value = username;
+                } else {
+                    displayUsername.textContent = '';
+                }
+                updateExerciseDropdown();
+                updateDisplay(); // This also calls saveExercises, which is fine.
+                goalInput.value = exercises[currentExerciseIndex].goal;
+
+                // Setup tooltips
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }
+
 
             // --- Debounce Helper ---
             function debounceBtn(btn, fn, delay) {
@@ -116,96 +307,97 @@
                 });
             }
 
-            // --- Button Actions ---
-            debounceBtn(addOneBtn, function () { addPushUps(1); });
-            debounceBtn(addFiveBtn, function () { addPushUps(5); });
-            debounceBtn(addTenBtn, function () { addPushUps(10); });
-            debounceBtn(addFiftyBtn, function () { addPushUps(50); });
-            debounceBtn(subtractOneBtn, function () { addPushUps(-1); });
-            debounceBtn(subtractTenBtn, function () { addPushUps(-10); });
-
-            const MAX_COUNT = 999999; // Set your desired maximum
-            const MAX_GOAL = 999999; // Set your desired goal limit
-
-            function updateCountDisplay() {
-                document.getElementById('completedCount').textContent = count;
-                const percent = Math.min(100, (completedCount / goal) * 100);
-                progressBarEl.style.width = percent + '%';
-                progressBarEl.textContent = completedCount + ' / ' + goal;
-                completedCountEl.classList.remove('pop');
-                void completedCountEl.offsetWidth;
-                completedCountEl.classList.add('pop');
-                motivationalMsgEl.textContent = completedCount >= goal
-                    ? "Goal reached! 🎉 Set a new one!"
-                    : randomMotivation();
-                setStorage('completedCount', completedCount);
-                setStorage('goal', goal);
-                // Optionally, disable increment buttons if at max
-                const addBtns = [
-                    document.getElementById('addOneBtn'),
-                    document.getElementById('addFiveBtn'),
-                    document.getElementById('addTenBtn'),
-                    document.getElementById('addFiftyBtn')
-                ];
-                addBtns.forEach(btn => {
-                    if (completedCount >= MAX_COUNT) {
-                        btn.disabled = true;
-                    } else {
-                        btn.disabled = false;
+            // --- Event Handlers ---
+            function handleAddNewExercise(e) {
+                if (e) e.preventDefault();
+                const newExerciseName = prompt("Enter the name for the new exercise:", `Exercise ${exercises.length + 1}`);
+                if (newExerciseName && newExerciseName.trim() !== "") {
+                    // Check if exercise name already exists (case insensitive)
+                    if (exercises.some(ex => ex.name.toLowerCase() === newExerciseName.trim().toLowerCase())) {
+                        alert("An exercise with this name already exists. Please choose a different name.");
+                        return;
                     }
-                });
-            }
-
-            function incrementCount(amount) {
-                if (completedCount + amount > MAX_COUNT) {
-                    completedCount = MAX_COUNT;
-                } else {
-                    completedCount += amount;
+                    exercises.push(createNewExercise(newExerciseName.trim()));
+                    switchExercise(exercises.length - 1); // Switch to the new exercise
+                    saveExercises(); // Save immediately
+                    updateExerciseDropdown(); // Refresh dropdown
+                    updateDisplay(); // Refresh display
+                } else if (newExerciseName !== null) { // User pressed OK but input was empty
+                    alert("Exercise name cannot be empty.");
                 }
-                playSound();
-                haptic();
-                updateCountDisplay();
             }
 
-            function addPushUps(amount) {
-                completedCount = Math.max(0, completedCount + amount);
+            function addCountToCurrentExercise(amount) {
+                if (!exercises[currentExerciseIndex]) return;
+                let currentEx = exercises[currentExerciseIndex];
+
+                currentEx.count += amount;
+                if (currentEx.count < 0) currentEx.count = 0;
+                if (currentEx.count > MAX_COUNT) currentEx.count = MAX_COUNT;
+
                 playSound();
                 haptic();
-                updateDisplay();
+                updateDisplay(); // This will also call saveExercises
             }
+
+            // --- Button Actions Setup ---
+            debounceBtn(addOneBtn, () => addCountToCurrentExercise(1));
+            debounceBtn(addFiveBtn, () => addCountToCurrentExercise(5));
+            debounceBtn(addTenBtn, () => addCountToCurrentExercise(10));
+            debounceBtn(addFiftyBtn, () => addCountToCurrentExercise(50));
+            debounceBtn(subtractOneBtn, () => addCountToCurrentExercise(-1));
+            debounceBtn(subtractTenBtn, () => addCountToCurrentExercise(-10));
 
             resetBtn.addEventListener('click', function () {
-                completedCount = 0;
-                updateDisplay();
-                haptic();
+                if (!exercises[currentExerciseIndex]) return;
+                if (confirm(`Are you sure you want to reset the count for "${exercises[currentExerciseIndex].name}"?`)) {
+                    exercises[currentExerciseIndex].count = 0;
+                    haptic();
+                    updateDisplay();
+                }
             });
 
             setGoalBtn.addEventListener('click', function () {
-                goalInput.value = goal;
+                if (!exercises[currentExerciseIndex]) return;
+                goalInput.value = exercises[currentExerciseIndex].goal; // Set current exercise's goal
                 goalModal.show();
             });
 
             saveGoalBtn.addEventListener('click', function () {
-                const val = parseInt(goalInput.value, 10);
-                if (val > 0 && val <= MAX_GOAL) {
-                    goal = val;
-                    if (completedCount > goal) completedCount = goal;
-                    updateDisplay();
-                    goalModal.hide();
-                    haptic();
-                } else if (val > MAX_GOAL) {
-                    alert(`Goal cannot be greater than ${MAX_GOAL}. Please set a lower goal.`);
+                if (!exercises[currentExerciseIndex]) return;
+                const rawValue = goalInput.value.trim();
+                if (rawValue === "") {
+                    alert("Goal input cannot be empty. Please enter a number.");
+                    return;
                 }
+                const val = parseInt(rawValue, 10);
+
+                if (isNaN(val)) {
+                    alert("Invalid input. Please enter a valid number for the goal.");
+                    return;
+                }
+                if (val <= 0) {
+                    alert("Goal must be a positive number.");
+                    return;
+                }
+                if (val > MAX_GOAL) {
+                    alert(`Goal cannot be greater than ${MAX_GOAL}. Please set a lower goal.`);
+                    return;
+                }
+
+                exercises[currentExerciseIndex].goal = val;
+                haptic();
+                updateDisplay();
+                goalModal.hide();
             });
 
-            // --- Theme Switcher ---
+            // Theme Switcher
             themeSwitcher.addEventListener('click', function () {
-                theme = (theme === 'light') ? 'dark' : 'light';
-                setStorage('theme', theme);
-                applyTheme(theme);
+                const newTheme = theme === 'light' ? 'dark' : 'light';
+                applyTheme(newTheme); // applyTheme will also save it
             });
 
-            // --- Share Button ---
+            // Share Button
             shareBtn.addEventListener('click', async function () {
                 const shareData = {
                     title: 'Push Up Counter',
@@ -228,8 +420,14 @@
                 screenshotBtn.disabled = true;
                 screenshotBtn.textContent = "Capturing...";
                 const target = document.getElementById('screenshotArea');
+                // Dynamically set background for html2canvas based on current theme
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+                const screenshotBgColor = currentTheme === 'dark' ?
+                    getComputedStyle(document.documentElement).getPropertyValue('--dark-card-bg').trim() || '#1e293b' : // Fallback to a dark color
+                    getComputedStyle(document.documentElement).getPropertyValue('--light-card-bg').trim() || '#ffffff'; // Fallback to white
+
                 html2canvas(target, {
-                    backgroundColor: "#0f172a",
+                    backgroundColor: screenshotBgColor,
                     useCORS: true,
                     scale: 2
                 }).then(function (canvas) {
@@ -248,45 +446,43 @@
                 });
             });
 
-            // --- Username Personalization ---
-            if (username) {
-                displayUsername.textContent = 'Welcome, ' + username;
-                usernameInput.value = username;
-            } else {
-                displayUsername.textContent = '';
-            }
+            // Username Personalization
             usernameForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                username = usernameInput.value.trim().replace(/\s+/g, '');
-                if (username.length > 0) {
-                    setStorage('username', username);
-                    displayUsername.textContent = 'Welcome, ' + username;
-                } else {
-                    displayUsername.textContent = '';
-                    localStorage.removeItem('pushupcounter_username');
+                const newUsername = usernameInput.value.trim();
+                if (newUsername.length === 0) {
+                    alert("Username cannot be empty.");
+                    return;
                 }
+                if (newUsername.length > 20) {
+                    alert("Username cannot be longer than 20 characters.");
+                    return;
+                }
+                if (!/^[a-zA-Z0-9\s]*$/.test(newUsername)) {
+                    alert("Username can only contain letters, numbers, and spaces.");
+                    return;
+                }
+                username = newUsername;
+                storage.setItem('username', username);
+                displayUsername.textContent = 'Welcome, ' + username;
             });
+
+            // YouTube Music Button
+            if (ytMusicBtn) {
+                ytMusicBtn.addEventListener('click', function () {
+                    const query = encodeURIComponent('workout music'); // Default query
+                    const currentExerciseName = exercises[currentExerciseIndex] ? exercises[currentExerciseIndex].name : 'workout';
+                    const dynamicQuery = encodeURIComponent(`${currentExerciseName} workout music`);
+                    window.open(`https://www.youtube.com/results?search_query=${dynamicQuery}`, '_blank');
+                });
+            }
 
             // --- Accessibility ---
             motivationalMsgEl.setAttribute('aria-live', 'polite');
             completedCountEl.setAttribute('role', 'status');
 
-            // --- Tooltips ---
-            document.addEventListener('DOMContentLoaded', function () {
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-                    new bootstrap.Tooltip(tooltipTriggerEl);
-                });
-            });
+            // --- App Initialization ---
+            // DOMContentLoaded to ensure all elements are available, then initialize.
+            document.addEventListener('DOMContentLoaded', initializeApp);
 
-            // --- YouTube Music Button ---
-            if (ytMusicBtn) {
-                ytMusicBtn.addEventListener('click', function () {
-                    const query = encodeURIComponent('workout music');
-                    window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
-                });
-            }
-
-            // --- Initialize Display ---
-            updateDisplay();
         })();
