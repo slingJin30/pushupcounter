@@ -217,7 +217,7 @@ body {
             text-shadow: 0 4px 28px var(--accent-color), 0 2px 0 #fff;
         }
         [data-bs-theme="light"] .counter-display {
-             text-shadow: 0 2px 10px color-mix(in srgb, var(--accent-color) 40%, transparent), 0 1px 0 #555;
+             text-shadow: 0 2px 10px rgba(var(--accent-color-rgb), 0.4), 0 1px 0 #555;
         }
 
 
@@ -251,10 +251,10 @@ body {
 
         [data-bs-theme="dark"] .motivational {
             color: var(--accent-color-light); /* Lighter accent for motivational text in dark */
-            text-shadow: 0 1px 4px color-mix(in srgb, var(--accent-color) 50%, #000);
+            text-shadow: 0 1px 4px var(--accent-color-shadow-dark);
         }
         [data-bs-theme="light"] .motivational {
-            color: color-mix(in srgb, var(--accent-color) 80%, #000); /* Darker shade of accent for light */
+            color: var(--accent-color-darker); /* Darker shade of accent for light */
             text-shadow: none;
         }
 
