@@ -1,15 +1,23 @@
 (function () {
+    // --- Dexie DB Definition ---
+    const db = new Dexie('PushUpCounterDB');
+    db.version(1).stores({
+        exercises: '++id, &name, count, goal', // Auto-incrementing id, unique name
+        userSettings: '&key, value' // Primary key 'key' (e.g., 'username', 'theme')
+    });
+
     // --- Constants ---
     const MAX_COUNT = 999999;
     const MAX_GOAL = 999999;
     const DEFAULT_EXERCISE_NAME = "Push Ups";
 
     // --- State Variables ---
-    let exercises = [];
-    let currentExerciseIndex = 0;
-    let username = '';
-    let theme = 'light';
-    let currentAccentColor = 'indigo'; // Default accent color
+    let exercises = []; // This will now be populated from IndexedDB
+    let currentExerciseIndex = 0; // Index relative to the runtime 'exercises' array
+    let username = ''; // Populated from IndexedDB
+    let theme = 'light'; // Populated from IndexedDB
+    let currentAccentColor = 'indigo'; // Populated from IndexedDB
+    let currentExerciseName = DEFAULT_EXERCISE_NAME; // Name of the currently active exercise, stored in DB
 
     const motivationalMessages = [
         "Keep going! You're crushing it!",
@@ -70,27 +78,8 @@
             };
 
             // --- Utility Functions ---
-            // --- Local Storage Abstraction ---
-            const storage = {
-                prefix: 'pushupcounter_',
-                setItem: function(key, value) {
-                    try {
-                        localStorage.setItem(this.prefix + key, JSON.stringify(value));
-                    } catch (e) {
-                        console.error("Error saving to localStorage:", key, e);
-                        // alert("Could not save settings. Your browser's local storage might be full or disabled.");
-                    }
-                },
-                getItem: function(key, fallback) {
-                    try {
-                        const val = localStorage.getItem(this.prefix + key);
-                        return val === null ? fallback : JSON.parse(val);
-                    } catch (e) {
-                        console.error("Error reading from localStorage:", key, e);
-                        return fallback;
-                    }
-                }
-            };
+            // The 'storage' object (localStorage wrapper) is no longer needed for main app data.
+            // Migration logic uses localStorage directly for its flag.
 
             // --- Utility Functions ---
             function haptic() {
@@ -125,7 +114,7 @@
                 }
                 // Update the global theme variable
                 theme = newTheme;
-                storage.setItem('theme', theme);
+                db.userSettings.put({ key: 'theme', value: theme }).catch(err => console.error("Failed to save theme:", err));
             }
 
             function applyAccentColor(accentName) {
@@ -149,36 +138,22 @@
                 document.body.classList.add(`accent-${accentName}`);
 
                 currentAccentColor = accentName;
-                storage.setItem('accentColor', currentAccentColor);
+                // Use 'accentColour' as the key to be consistent with migration logic if that was the intent
+                db.userSettings.put({ key: 'accentColour', value: currentAccentColor }).catch(err => console.error("Failed to save accent colour:", err));
             }
 
             // --- Exercise Data Management ---
-            function createNewExercise(name) {
+            function createNewExercise(name) { // This function is still useful for creating the initial object structure
                 return {
+                    // id will be assigned by IndexedDB
                     name: name,
                     count: 0,
                     goal: 2500 // Default goal for a new exercise
                 };
             }
 
-            function saveExercises() {
-                storage.setItem('exercises', exercises);
-                storage.setItem('currentExerciseIndex', currentExerciseIndex);
-            }
-
-            function loadExercises() {
-                exercises = storage.getItem('exercises', []);
-                currentExerciseIndex = storage.getItem('currentExerciseIndex', 0);
-
-                if (exercises.length === 0) {
-                    exercises.push(createNewExercise(DEFAULT_EXERCISE_NAME));
-                    currentExerciseIndex = 0;
-                }
-                // Ensure currentExerciseIndex is valid
-                if (currentExerciseIndex >= exercises.length || currentExerciseIndex < 0) {
-                    currentExerciseIndex = 0;
-                }
-            }
+            // loadExercises() is replaced by logic in initializeApp()
+            // saveExercises() is replaced by direct DB updates in relevant functions
 
             // --- UI Update Functions ---
             function updateExerciseDropdown() {
@@ -258,30 +233,74 @@
                  addBtns.forEach(btn => {
                     btn.disabled = currentEx.count >= MAX_COUNT;
                  });
-                saveExercises(); // Save state whenever display updates
+                // saveExercises(); // Removed: Data is saved directly on modification
             }
 
-            function switchExercise(index) {
+            async function switchExercise(index) {
                 if (index >= 0 && index < exercises.length) {
                     currentExerciseIndex = index;
+                    currentExerciseName = exercises[currentExerciseIndex].name; // Update global state variable
+
+                    try {
+                        await db.userSettings.put({ key: 'currentExerciseName', value: currentExerciseName });
+                    } catch (error) {
+                        console.error("Failed to save current exercise name to DB:", error);
+                        // Non-critical for immediate UI, but log it.
+                    }
+
                     updateExerciseDropdown(); // Update active state in dropdown
                     updateDisplay(); // Refresh main display for the new exercise
                     // Update goal modal input if it's open or when it's next opened
-                    goalInput.value = exercises[currentExerciseIndex].goal;
+                    if (exercises[currentExerciseIndex]) { // Ensure exercise exists
+                        goalInput.value = exercises[currentExerciseIndex].goal;
+                    }
                 }
             }
 
 
             // --- Initialization Function ---
-            function initializeApp() {
-                // Load data
-                username = storage.getItem('username', '');
-                theme = storage.getItem('theme', 'light');
-                currentAccentColor = storage.getItem('accentColor', 'indigo');
-                loadExercises();
+            async function initializeApp() {
+                await migrateFromLocalStorage();
+
+                // Load data from IndexedDB
+                const dbExercises = await db.exercises.toArray();
+                const dbUsername = await db.userSettings.get('username');
+                const dbTheme = await db.userSettings.get('theme');
+                const dbAccentColour = await db.userSettings.get('accentColour'); // Ensure key matches what's saved in migration
+                const dbCurrentExerciseName = await db.userSettings.get('currentExerciseName');
+
+                exercises = dbExercises;
+                username = dbUsername ? dbUsername.value : '';
+                theme = dbTheme ? dbTheme.value : 'light';
+                currentAccentColor = dbAccentColour ? dbAccentColour.value : 'indigo';
+                currentExerciseName = dbCurrentExerciseName ? dbCurrentExerciseName.value : DEFAULT_EXERCISE_NAME;
+
+                if (exercises.length === 0) {
+                    const defaultEx = createNewExercise(DEFAULT_EXERCISE_NAME);
+                    // Add to DB and then update local 'exercises' array
+                    const id = await db.exercises.put({ name: defaultEx.name, count: defaultEx.count, goal: defaultEx.goal });
+                    defaultEx.id = id; // Assign the auto-generated id
+                    exercises.push(defaultEx);
+                    currentExerciseName = defaultEx.name; // Ensure currentExerciseName is set
+                    await db.userSettings.put({ key: 'currentExerciseName', value: currentExerciseName });
+                }
+
+                // Determine currentExerciseIndex based on currentExerciseName
+                currentExerciseIndex = exercises.findIndex(ex => ex.name === currentExerciseName);
+                if (currentExerciseIndex === -1) { // Fallback if name not found
+                    currentExerciseIndex = 0;
+                    if (exercises.length > 0) {
+                        currentExerciseName = exercises[0].name;
+                        // Optionally update currentExerciseName in DB if it was mismatched
+                        await db.userSettings.put({ key: 'currentExerciseName', value: currentExerciseName });
+                    } else {
+                        // This case should ideally not be reached if the empty exercises block above works.
+                        currentExerciseName = DEFAULT_EXERCISE_NAME;
+                    }
+                }
 
                 // Apply theme and accent
-                applyTheme(theme);
+                applyTheme(theme); // applyTheme will also call storage.setItem('theme', theme); - this needs to change
                 applyAccentColor(currentAccentColor);
 
                 // Populate Accent Color Selector
@@ -380,7 +399,7 @@
             }
 
             // --- Event Handlers ---
-            function handleAddNewExercise(e) {
+            async function handleAddNewExercise(e) {
                 if (e) e.preventDefault();
                 const newExerciseName = prompt("Enter the name for the new exercise:", `Exercise ${exercises.length + 1}`);
                 if (newExerciseName === null) return; // User cancelled
@@ -390,23 +409,43 @@
                     alert("Exercise name cannot be empty.");
                     return;
                 }
+                // Check against local 'exercises' array first for immediate feedback,
+                // though DB's unique constraint on 'name' is the ultimate guard.
                 if (exercises.some(ex => ex.name.toLowerCase() === trimmedName.toLowerCase())) {
                     alert("An exercise with this name already exists. Please choose a different name.");
                     return;
                 }
-                exercises.push(createNewExercise(trimmedName));
-                switchExercise(exercises.length - 1);
-                saveExercises();
-                updateExerciseDropdown(); // This also calls updateDisplay indirectly via switchExercise if index changes
-                // updateDisplay(); // Not strictly needed here if switchExercise caused a display update
+
+                const newExercise = createNewExercise(trimmedName);
+                try {
+                    // Add to DB. The 'name' field has a unique index.
+                    // Dexie's `put` would also work and would update if name existed, but `add` is stricter for new items.
+                    // However, since schema has `++id`, `put` is fine for adding as it will auto-gen ID.
+                    // If name constraint is violated, this will throw an error.
+                    const id = await db.exercises.put({ name: newExercise.name, count: newExercise.count, goal: newExercise.goal });
+                    newExercise.id = id; // Assign the auto-generated ID to the local object
+                    exercises.push(newExercise); // Add to local array
+                    switchExercise(exercises.length - 1); // Switch to the new exercise
+                    // updateExerciseDropdown(); // Called by switchExercise
+                } catch (error) {
+                    console.error("Failed to add new exercise to DB:", error);
+                    if (error.name === 'ConstraintError') {
+                        alert("An exercise with this name already exists in the database. Please choose a different name.");
+                    } else {
+                        alert("Failed to save new exercise. Please try again.");
+                    }
+                    return; // Don't proceed if save failed
+                }
+                // No explicit saveExercises() needed. updateExerciseDropdown() is called by switchExercise().
             }
 
-            function handleRenameCurrentExercise(e) {
+            async function handleRenameCurrentExercise(e) {
                 if (e) e.preventDefault();
                 if (!exercises[currentExerciseIndex]) return;
 
-                const currentName = exercises[currentExerciseIndex].name;
-                const newNamePrompt = prompt(`Enter new name for "${currentName}":`, currentName);
+                const exerciseToRename = exercises[currentExerciseIndex];
+                const oldName = exerciseToRename.name;
+                const newNamePrompt = prompt(`Enter new name for "${oldName}":`, oldName);
 
                 if (newNamePrompt === null) return; // User cancelled
 
@@ -415,49 +454,80 @@
                     alert("Exercise name cannot be empty.");
                     return;
                 }
-                // Check if new name is different and if it already exists (excluding the current one)
-                if (trimmedNewName.toLowerCase() !== currentName.toLowerCase() &&
-                    exercises.some((ex, index) => index !== currentExerciseIndex && ex.name.toLowerCase() === trimmedNewName.toLowerCase())) {
+                if (trimmedNewName.toLowerCase() === oldName.toLowerCase()) {
+                    return; // No change
+                }
+
+                // Check if new name already exists in other exercises (local check for quick feedback)
+                if (exercises.some((ex, index) => index !== currentExerciseIndex && ex.name.toLowerCase() === trimmedNewName.toLowerCase())) {
                     alert("An exercise with this name already exists. Please choose a different name.");
                     return;
                 }
 
-                exercises[currentExerciseIndex].name = trimmedNewName;
-                saveExercises();
-                updateExerciseDropdown(); // Will update dropdown button text and list
-                // updateDisplay(); // Not strictly needed as dropdown update should cover visual change of name
+                try {
+                    // Update in DB. The unique constraint on 'name' will be checked by Dexie.
+                    await db.exercises.update(exerciseToRename.id, { name: trimmedNewName });
+                    exerciseToRename.name = trimmedNewName; // Update local array
+
+                    // If this was the globally current exercise, update its name in userSettings
+                    if (currentExerciseName === oldName) {
+                        currentExerciseName = trimmedNewName;
+                        await db.userSettings.put({ key: 'currentExerciseName', value: currentExerciseName });
+                    }
+                    updateExerciseDropdown(); // Redraw dropdown
+                } catch (error) {
+                    console.error("Failed to rename exercise in DB:", error);
+                     if (error.name === 'ConstraintError') {
+                        alert("An exercise with this name already exists in the database. Please choose a different name.");
+                    } else {
+                        alert("Failed to rename exercise. Please try again.");
+                    }
+                }
             }
 
-            function handleDeleteCurrentExercise(e) {
+            async function handleDeleteCurrentExercise(e) {
                 if (e) e.preventDefault();
                 if (!exercises[currentExerciseIndex]) return;
 
-                const exerciseNameToDelete = exercises[currentExerciseIndex].name;
+                const exerciseToDelete = exercises[currentExerciseIndex];
+                const exerciseNameToDelete = exerciseToDelete.name;
+
                 if (!confirm(`Are you sure you want to delete "${exerciseNameToDelete}"? This action cannot be undone.`)) {
                     return; // User cancelled
                 }
 
-                if (exercises.length === 1) {
-                    // Last exercise: reset to default instead of deleting
-                    exercises[0] = createNewExercise(DEFAULT_EXERCISE_NAME); // Reset to default
-                    currentExerciseIndex = 0; // Ensure index is 0
-                    alert(`"${exerciseNameToDelete}" was the last exercise and has been reset to "${DEFAULT_EXERCISE_NAME}".`);
-                } else {
-                    exercises.splice(currentExerciseIndex, 1); // Remove the exercise
-                    // Adjust currentExerciseIndex if it's now out of bounds
-                    if (currentExerciseIndex >= exercises.length) {
-                        currentExerciseIndex = exercises.length - 1;
-                    }
-                     // No alert needed here, UI will just update
-                }
+                try {
+                    if (exercises.length === 1) {
+                        // Last exercise: reset to default instead of deleting it entirely from DB, then update it.
+                        const defaultExerciseData = createNewExercise(DEFAULT_EXERCISE_NAME);
+                        await db.exercises.update(exerciseToDelete.id, defaultExerciseData); // Update existing record to default
+                        exercises[0] = { ...defaultExerciseData, id: exerciseToDelete.id }; // Update local array
 
-                saveExercises();
-                // switchExercise will call updateExerciseDropdown and updateDisplay
-                switchExercise(currentExerciseIndex);
+                        currentExerciseIndex = 0;
+                        currentExerciseName = exercises[0].name;
+                        await db.userSettings.put({ key: 'currentExerciseName', value: currentExerciseName });
+                        alert(`"${exerciseNameToDelete}" was the last exercise and has been reset to "${DEFAULT_EXERCISE_NAME}".`);
+                    } else {
+                        await db.exercises.delete(exerciseToDelete.id); // Delete from DB
+                        exercises.splice(currentExerciseIndex, 1); // Remove from local array
+
+                        // Adjust currentExerciseIndex if it's now out of bounds
+                        if (currentExerciseIndex >= exercises.length) {
+                            currentExerciseIndex = exercises.length - 1;
+                        }
+                        currentExerciseName = exercises[currentExerciseIndex].name; // Update currentExerciseName based on new index
+                        await db.userSettings.put({ key: 'currentExerciseName', value: currentExerciseName });
+                    }
+
+                    switchExercise(currentExerciseIndex); // This will call updateExerciseDropdown and updateDisplay
+                } catch (error) {
+                    console.error("Failed to delete/reset exercise in DB:", error);
+                    alert("Failed to delete exercise. Please try again.");
+                }
             }
 
 
-            function addCountToCurrentExercise(amount) {
+            async function addCountToCurrentExercise(amount) {
                 if (!exercises[currentExerciseIndex]) return;
                 let currentEx = exercises[currentExerciseIndex];
 
@@ -465,9 +535,16 @@
                 if (currentEx.count < 0) currentEx.count = 0;
                 if (currentEx.count > MAX_COUNT) currentEx.count = MAX_COUNT;
 
+                try {
+                    await db.exercises.put(currentEx); // Save the updated exercise object (Dexie's put handles add or update)
+                } catch (error) {
+                    console.error("Failed to save exercise count update to DB:", error);
+                    // Optionally, alert the user or handle the error
+                }
+
                 playSound();
                 haptic();
-                updateDisplay(); // This will also call saveExercises
+                updateDisplay();
             }
 
             // --- Button Actions Setup ---
@@ -478,12 +555,19 @@
             debounceBtn(subtractOneBtn, () => addCountToCurrentExercise(-1));
             debounceBtn(subtractTenBtn, () => addCountToCurrentExercise(-10));
 
-            resetBtn.addEventListener('click', function () {
+            resetBtn.addEventListener('click', async function () {
                 if (!exercises[currentExerciseIndex]) return;
-                if (confirm(`Are you sure you want to reset the count for "${exercises[currentExerciseIndex].name}"?`)) {
-                    exercises[currentExerciseIndex].count = 0;
-                    haptic();
-                    updateDisplay();
+                const currentEx = exercises[currentExerciseIndex];
+                if (confirm(`Are you sure you want to reset the count for "${currentEx.name}"?`)) {
+                    currentEx.count = 0;
+                    try {
+                        await db.exercises.put(currentEx); // Save updated exercise
+                        haptic();
+                        updateDisplay();
+                    } catch (error) {
+                        console.error("Failed to reset count in DB:", error);
+                        alert("Failed to reset count. Please try again.");
+                    }
                 }
             });
 
@@ -493,9 +577,11 @@
                 goalModal.show();
             });
 
-            saveGoalBtn.addEventListener('click', function () {
+            saveGoalBtn.addEventListener('click', async function () {
                 if (!exercises[currentExerciseIndex]) return;
+                const currentEx = exercises[currentExerciseIndex];
                 const rawValue = goalInput.value.trim();
+
                 if (rawValue === "") {
                     alert("Goal input cannot be empty. Please enter a number.");
                     return;
@@ -515,10 +601,16 @@
                     return;
                 }
 
-                exercises[currentExerciseIndex].goal = val;
-                haptic();
-                updateDisplay();
-                goalModal.hide();
+                currentEx.goal = val;
+                try {
+                    await db.exercises.put(currentEx); // Save updated exercise
+                    haptic();
+                    updateDisplay();
+                    goalModal.hide();
+                } catch (error) {
+                    console.error("Failed to save goal in DB:", error);
+                    alert("Failed to save goal. Please try again.");
+                }
             });
 
             // Theme Switcher
@@ -593,8 +685,15 @@
                     return;
                 }
                 username = newUsername;
-                storage.setItem('username', username);
-                displayUsername.textContent = 'Welcome, ' + username;
+                db.userSettings.put({ key: 'username', value: username })
+                    .then(() => {
+                        displayUsername.textContent = 'Welcome, ' + username;
+                    })
+                    .catch(err => {
+                        console.error("Failed to save username:", err);
+                        alert("Failed to save username. Please try again.");
+                        // Optionally revert UI or username variable if critical
+                    });
             });
 
             // YouTube Music Button
@@ -610,6 +709,77 @@
             // --- Accessibility ---
             motivationalMsgEl.setAttribute('aria-live', 'polite');
             completedCountEl.setAttribute('role', 'status');
+
+            // --- Data Migration from localStorage to IndexedDB ---
+            async function migrateFromLocalStorage() {
+                const migrationDone = localStorage.getItem('pushupcounter_migrationDone');
+                if (migrationDone) {
+                    // console.log("Migration already performed.");
+                    return;
+                }
+
+                console.log("Starting migration from localStorage to IndexedDB...");
+                try {
+                    const oldStoragePrefix = 'pushupcounter_';
+                    const lsExercises = JSON.parse(localStorage.getItem(oldStoragePrefix + 'exercises'));
+                    const lsCurrentExerciseIndex = JSON.parse(localStorage.getItem(oldStoragePrefix + 'currentExerciseIndex'));
+                    const lsUsername = JSON.parse(localStorage.getItem(oldStoragePrefix + 'username'));
+                    const lsTheme = JSON.parse(localStorage.getItem(oldStoragePrefix + 'theme'));
+                    const lsAccentColor = JSON.parse(localStorage.getItem(oldStoragePrefix + 'accentColor'));
+
+                    await db.transaction('rw', db.exercises, db.userSettings, async () => {
+                        if (lsExercises && Array.isArray(lsExercises)) {
+                            // Upsert exercises by name. If name isn't unique, this might need adjustment
+                            // or rely on the schema's unique constraint on 'name'.
+                            // Dexie's put will add or replace based on primary key. If 'name' is unique index,
+                            // we might need to query first or handle potential constraint errors if not using 'id'.
+                            // For simplicity, we assume new items or items that can be identified by name if 'id' is not present.
+                            // The schema is '++id, &name,...', so 'name' is unique.
+                            // We'll try to put them, and if an exercise with the same name exists, it gets updated.
+                            // If `id` was part of lsExercises, Dexie would use it. Since it's not, it will auto-increment.
+                            const exercisesToPut = lsExercises.map(ex => ({
+                                name: ex.name,
+                                count: ex.count,
+                                goal: ex.goal
+                            }));
+                            await db.exercises.bulkPut(exercisesToPut);
+                            console.log("Migrated exercises:", exercisesToPut);
+                        }
+
+                        const settingsToPut = [];
+                        if (lsUsername !== null) settingsToPut.push({ key: 'username', value: lsUsername });
+                        if (lsTheme !== null) settingsToPut.push({ key: 'theme', value: lsTheme });
+                        if (lsAccentColor !== null) settingsToPut.push({ key: 'accentColour', value: lsAccentColor }); // Note: 'accentColor' -> 'accentColour' if we standardise key name
+
+                        let lsCurrentExerciseName = DEFAULT_EXERCISE_NAME;
+                        if (lsExercises && lsExercises[lsCurrentExerciseIndex]) {
+                            lsCurrentExerciseName = lsExercises[lsCurrentExerciseIndex].name;
+                        }
+                        settingsToPut.push({ key: 'currentExerciseName', value: lsCurrentExerciseName });
+
+                        if (settingsToPut.length > 0) {
+                            await db.userSettings.bulkPut(settingsToPut);
+                            console.log("Migrated settings:", settingsToPut);
+                        }
+                    });
+
+                    localStorage.setItem('pushupcounter_migrationDone', 'true');
+                    console.log("Migration completed successfully.");
+
+                    // Optional: Clear old localStorage items after successful migration
+                    // localStorage.removeItem(oldStoragePrefix + 'exercises');
+                    // localStorage.removeItem(oldStoragePrefix + 'currentExerciseIndex');
+                    // localStorage.removeItem(oldStoragePrefix + 'username');
+                    // localStorage.removeItem(oldStoragePrefix + 'theme');
+                    // localStorage.removeItem(oldStoragePrefix + 'accentColor');
+                    // console.log("Old localStorage items cleared.");
+
+                } catch (error) {
+                    console.error("Migration failed:", error);
+                    // If migration fails, we might not want to set the flag, so it can be retried.
+                    // Or, handle specific errors.
+                }
+            }
 
             // --- App Initialization ---
             // DOMContentLoaded to ensure all elements are available, then initialize.
