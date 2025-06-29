@@ -34,6 +34,12 @@
     --accent-orange-light: #fdba74; /* Tailwind Orange 300 */
     --accent-purple: #8b5cf6; /* Tailwind Violet 500 */
     --accent-purple-light: #c4b5fd; /* Tailwind Violet 300 */
+
+    /* Custom Warning Colours */
+    --warning-bg-soft: #fff9e0; /* Lighter, creamier yellow */
+    --warning-border-soft: #ffefc6; /* Corresponding border */
+    --warning-text-soft: #5c4a03; /* Darker, more readable text */
+    --warning-text-strong: #483802; /* Even darker for strong text */
 }
 
 /* Accent Picker Button Styles */
@@ -73,6 +79,14 @@ body {
 [data-bs-theme="dark"] body {
     background: var(--dark-bg-gradient);
     color: var(--dark-text-color);
+}
+
+[data-bs-theme="dark"] {
+    /* Custom Warning Colours for Dark Theme */
+    --warning-bg-soft: #2a2100; /* Darker, less saturated for dark mode */
+    --warning-border-soft: #403200;
+    --warning-text-soft: #ffe799; /* Lighter text for dark mode */
+    --warning-text-strong: #fff0b3;
 }
 
 
@@ -248,6 +262,25 @@ body {
                 transform: translateY(0);
             }
         }
+
+/* Custom Warning Message Style */
+.custom-warning {
+    background-color: var(--warning-bg-soft, #fff3cd); /* Default fallback if CSS var is missing */
+    border-color: var(--warning-border-soft, #ffeeba);
+    color: var(--warning-text-soft, #664d03);
+    border-radius: 0.5rem; /* Rounded corners */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.07); /* Softer, slightly larger shadow */
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+    text-align: left;
+    font-size: 0.95rem;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.custom-warning strong {
+    color: var(--warning-text-strong, #523c02);
+}
 
         [data-bs-theme="dark"] .motivational {
             color: var(--accent-color-light); /* Lighter accent for motivational text in dark */
