@@ -458,13 +458,18 @@ body {
         footer a:hover {
             color: #ffd700 !important;
         }
-        footer .btn-outline-light.btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
+footer .btn-outline-light {
+    padding: 0.5rem 1.2rem; /* Match #shareBtn padding */
+    font-size: 0.9rem; /* Keeping font-size consistent with previous .btn-sm for these */
+    font-weight: 600; /* Match #shareBtn font-weight */
+    border-radius: 1.5rem; /* Match #shareBtn border-radius */
             color: var(--accent-text-on-dark);
             border-color: var(--accent-text-on-dark);
+    /* Ensure other properties like box-shadow and transition are comparable or defined */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
         }
-        footer .btn-outline-light.btn-sm:hover {
+footer .btn-outline-light:hover {
             background-color: var(--accent-text-on-dark);
             color: var(--accent-color);
         }
