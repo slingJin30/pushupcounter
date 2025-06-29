@@ -33,37 +33,22 @@
             </a>
             <div class="ms-auto d-flex align-items-center gap-3">
                 <span class="theme-switcher me-2" id="themeSwitcher" title="Switch Theme" style="font-size:2rem; cursor:pointer; transition:color 0.2s;">🌙</span>
-                <button class="btn btn-outline-primary shadow-sm" id="shareBtn" style="font-weight:700; border-radius:2rem; transition:background 0.2s;">Share Site</button>
-                <a href="https://github.com/slingJin30/pushupcounter/archive/refs/heads/main.zip" target="_blank" rel="noopener" class="btn btn-success d-flex align-items-center gap-2" style="font-weight:700; border-radius:2rem;">
-                    <i class="bi bi-download" style="font-size:1.5rem;"></i> Download ZIP
-                </a>
             </div>
         </div>
     </nav>
     <div class="container py-4">
         <div class="row mb-4">
             <div class="col-12 text-center">
-                <div class="alert alert-warning d-inline-block" id="storageWarning" style="max-width:600px;">
-                    <strong>Warning:</strong> Your push up count and goal are saved in your browser's local storage. If you clear your browser data or use a different device, your progress will be lost.
-                </div>
-                <div class="my-5 mb-5">
-                    <button class="btn btn-lg btn-info shadow mb-5" id="screenshotBtn" style="color:#fff;font-weight:700;">
-                        <i class="bi bi-camera"></i> Save Progress Image
-                    </button>
-                    <button class="btn btn-lg btn-danger shadow" id="ytMusicBtn" style="color:#fff;font-weight:700; margin-left:10px;">
-                        <i class="bi bi-youtube"></i> YouTube Workout Music
-                    </button>
-                </div>
-                <div class="mb-3">
-                    <form id="usernameForm" class="d-inline-flex align-items-center gap-2">
-                        <label for="usernameInput" class="form-label mb-0 fw-bold" style="color:#fff;">Username:</label>
-                        <input type="text" id="usernameInput" class="form-control" style="width:150px;" maxlength="20"
-                            placeholder="Enter your name">
-                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                    </form>
-                </div>
                 <div id="screenshotArea"
                     style="display:inline-block; background:rgba(30,41,59,0.95); border-radius:2rem; padding:2rem 1rem; box-shadow:0 4px 24px rgba(0,0,0,0.12);">
+                    <div class="mb-3">
+                        <form id="usernameForm" class="d-inline-flex align-items-center gap-2">
+                            <label for="usernameInput" class="form-label mb-0 fw-bold" style="color:#fff;">Username:</label>
+                            <input type="text" id="usernameInput" class="form-control form-control-sm" style="width:150px;" maxlength="20"
+                                placeholder="Enter your name">
+                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                        </form>
+                    </div>
                     <div class="fw-bold text-info mb-2" id="displayUsername" style="font-size:1.3rem;"></div>
                     <div class="counter-display" id="completedCount">0</div>
                     <div class="motivational" id="motivationalMsg">Keep going! You're crushing it! 💪</div>
@@ -103,6 +88,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="my-4">
+                    <button class="btn btn-lg btn-info shadow" id="screenshotBtn" style="color:#fff;font-weight:700;">
+                        <i class="bi bi-camera"></i> Save Progress Image
+                    </button>
+                    <button class="btn btn-lg btn-danger shadow" id="ytMusicBtn" style="color:#fff;font-weight:700; margin-left:10px;">
+                        <i class="bi bi-youtube"></i> YouTube Workout Music
+                    </button>
+                </div>
+                <div class="alert alert-warning d-inline-block mt-3" id="storageWarning" style="max-width:600px;">
+                    <strong>Warning:</strong> Your push up count and goal are saved in your browser's local storage. If you clear your browser data or use a different device, your progress will be lost.
+                </div>
             </div>
         </div>
     </div>
@@ -124,42 +120,47 @@
         </div>
     </div>
 
-    <div class="container my-4">
-        <div class="donate-card mx-auto">
-            <div class="donate-content row g-4 align-items-stretch flex-md-nowrap justify-content-center">
-                <div class="col-12 col-md-6 d-flex align-items-center">
-                    <div>
-                        <div class="donate-title">Support the Creator</div>
-                        <div class="donate-desc">If you enjoy this app, you can buy me a coffee:</div>
-                        <div class="donate-actions d-flex align-items-center flex-wrap">
-                            <a href="https://buymeacoffee.com/slingjin30" target="_blank" rel="noopener" class="donate-btn-coffee">
-                                Buy Me a Coffee
-                            </a>
+    <footer class="text-center py-4" style="background: linear-gradient(90deg, #0d6efd 0%, #6610f2 100%); color: #fff; font-size:1.1rem; font-weight:600; letter-spacing:0.5px; border-radius: 1.5rem 1.5rem 0 0; box-shadow: 0 -2px 16px rgba(13,110,253,0.15); margin-top:2rem;">
+        <div class="container">
+            <div class="mb-2">
+                <button class="btn btn-outline-light btn-sm shadow-sm" id="shareBtn" style="font-weight:700; border-radius:2rem; transition:background 0.2s;">Share Site</button>
+                <a href="https://github.com/slingJin30/pushupcounter/archive/refs/heads/main.zip" target="_blank" rel="noopener" class="btn btn-outline-light btn-sm d-inline-flex align-items-center gap-2" style="font-weight:700; border-radius:2rem;">
+                    <i class="bi bi-download"></i> Download ZIP
+                </a>
+            </div>
+            <div class="donate-card mx-auto my-3" style="max-width: 540px;">
+                <div class="donate-content row g-3 align-items-stretch flex-md-nowrap justify-content-center">
+                    <div class="col-12 col-md-6 d-flex align-items-center">
+                        <div>
+                            <div class="donate-title">Support the Creator</div>
+                            <div class="donate-desc">If you enjoy this app, you can buy me a coffee:</div>
+                            <div class="donate-actions d-flex align-items-center flex-wrap">
+                                <a href="https://buymeacoffee.com/slingjin30" target="_blank" rel="noopener" class="donate-btn-coffee btn-sm">
+                                    Buy Me a Coffee
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-md-6 d-flex align-items-center">
-                    <div>
-                        <div class="donate-title">Support with Bitcoin</div>
-                        <div class="donate-desc">You can also support me with Bitcoin:</div>
-                        <div class="donate-actions d-flex align-items-center flex-wrap">
-                            <span class="donate-btc-label">Address:</span>
-                            <span class="donate-btc" id="bitcoinAddress" style="word-break:break-all; ">bc1qhyt2vq0rlc596eee2jgef79fvmm9apm5cz57a3</span>
+                    <div class="col-12 col-md-6 d-flex align-items-center">
+                        <div>
+                            <div class="donate-title">Support with Bitcoin</div>
+                            <div class="donate-desc">You can also support me with Bitcoin:</div>
+                            <div class="donate-actions d-flex align-items-center flex-wrap">
+                                <span class="donate-btc-label">Address:</span>
+                                <span class="donate-btc" id="bitcoinAddress" style="word-break:break-all; ">bc1qhyt2vq0rlc596eee2jgef79fvmm9apm5cz57a3</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <span>
+                © <span id="year"></span> Push Up Counter &middot;
+                <a href="https://github.com/slingjin30/pushupcounter" target="_blank" rel="noopener" style="color:#ffd700; text-decoration:underline; font-weight:700;">
+                    @slingjin30
+                </a>
+            </span>
+            <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
         </div>
-    </div>
-
-    <footer class="text-center py-4" style="background: linear-gradient(90deg, #0d6efd 0%, #6610f2 100%); color: #fff; font-size:1.1rem; font-weight:600; letter-spacing:0.5px; border-radius: 1.5rem 1.5rem 0 0; box-shadow: 0 -2px 16px rgba(13,110,253,0.15); margin-top:2rem;">
-        <span>
-            © <span id="year"></span> Push Up Counter &middot;
-            <a href="https://github.com/slingjin30/pushupcounter" target="_blank" rel="noopener" style="color:#ffd700; text-decoration:underline; font-weight:700;">
-                @slingjin30
-            </a>
-        </span>
-        <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
     </footer>
 
     <audio id="pushupSound" src="assets/sounds/pushup.mp3" preload="auto"></audio>
