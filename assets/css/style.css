@@ -485,17 +485,42 @@ body {
             color: #fbbf24; /* Yellow for BTC label */
         }
         .donate-btc { /* BTC address display */
-            background: #fff; /* Light background for readability */
-            color: #f59e42; /* Orange text */
-            /* ... rest of .donate-btc styles ... */
             border-radius: 0.5rem;
-            padding: 0.22rem 0.7rem;
-            font-size: 1.02rem;
+            padding: 0.25rem 0.75rem; /* Slightly increased padding */
+            font-size: 1rem; /* Slightly reduced font size for better fit if long */
             font-family: 'Fira Mono', 'Consolas', monospace;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.09);
-            font-weight: 700;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-weight: 600; /* Adjusted font weight */
             letter-spacing: 0.5px;
+            border: 1px solid transparent; /* Base border */
+            line-height: 1.4; /* Ensure text fits well */
         }
+        [data-bs-theme="light"] .donate-btc {
+            background: #f8f9fa; /* Very light gray */
+            color: #c55200; /* Darker, richer orange */
+            border-color: #e9ecef;
+        }
+        [data-bs-theme="dark"] .donate-btc {
+            background: #2c3034; /* Darker background for the tag in dark mode */
+            color: #ffc107; /* Bright yellow, good contrast on dark gray */
+            border-color: #495057;
+        }
+
+        #bitcoinQrCode {
+            display: flex; /* Used to help center the img qrcode.js creates */
+            justify-content: center; /* Centers the img horizontally */
+            align-items: center; /* Centers the img vertically if container had more height */
+            padding: 5px; /* Small padding so QR code isn't flush against border */
+            background-color: #fff; /* Ensure QR code has a white background for scannability */
+            border-radius: 0.25rem; /* Slight rounding of corners */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
+            margin-bottom: 0.5rem; /* Spacing below QR code */
+        }
+        #bitcoinQrCode img {
+            max-width: 100%; /* Ensure QR code image is responsive within its container */
+            height: auto; /* Maintain aspect ratio */
+        }
+
 
         /* Alert warning - ensure it's themed */
         [data-bs-theme="light"] .alert-warning {

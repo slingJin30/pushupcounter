@@ -205,7 +205,23 @@
                 addNewLi.innerHTML = `<a class="dropdown-item" href="#" id="addNewExerciseBtnListener"><i class="bi bi-plus-circle-fill me-2"></i>Add New Exercise</a>`;
                 exerciseListUl.appendChild(addNewLi);
                 // Re-attach event listener for the new "Add New Exercise" button
-                document.getElementById('addNewExerciseBtnListener').addEventListener('click', handleAddNewExercise);
+                const addNewBtnListener = document.getElementById('addNewExerciseBtnListener');
+                if (addNewBtnListener) {
+                    addNewBtnListener.addEventListener('click', handleAddNewExercise);
+                }
+
+                // Add "Rename Current Exercise" and "Delete Current Exercise"
+                if (exercises.length > 0) { // Only show if there are exercises
+                    const renameLi = document.createElement('li');
+                    renameLi.innerHTML = `<a class="dropdown-item" href="#" id="renameCurrentExerciseBtn"><i class="bi bi-pencil-fill me-2"></i>Rename Current</a>`;
+                    exerciseListUl.appendChild(renameLi);
+                    document.getElementById('renameCurrentExerciseBtn').addEventListener('click', handleRenameCurrentExercise);
+
+                    const deleteLi = document.createElement('li');
+                    deleteLi.innerHTML = `<a class="dropdown-item text-danger" href="#" id="deleteCurrentExerciseBtn"><i class="bi bi-trash-fill me-2"></i>Delete Current</a>`;
+                    exerciseListUl.appendChild(deleteLi);
+                    document.getElementById('deleteCurrentExerciseBtn').addEventListener('click', handleDeleteCurrentExercise);
+                }
             }
 
 
@@ -293,6 +309,25 @@
                 tooltipTriggerList.forEach(function (tooltipTriggerEl) {
                     new bootstrap.Tooltip(tooltipTriggerEl);
                 });
+
+                // Generate Bitcoin QR Code
+                const btcAddressEl = document.getElementById('bitcoinAddress');
+                const btcQrCodeEl = document.getElementById('bitcoinQrCode');
+                if (btcAddressEl && btcQrCodeEl && typeof QRCode !== 'undefined') {
+                    const btcAddress = btcAddressEl.textContent.trim();
+                    if (btcAddress) {
+                        new QRCode(btcQrCodeEl, {
+                            text: btcAddress,
+                            width: 128,
+                            height: 128,
+                            colorDark : "#000000",
+                            colorLight : "#ffffff",
+                            correctLevel : QRCode.CorrectLevel.H
+                        });
+                    }
+                } else {
+                    console.warn("Bitcoin QR Code elements not found or QRCode library not loaded.");
+                }
             }
 
 
@@ -311,21 +346,79 @@
             function handleAddNewExercise(e) {
                 if (e) e.preventDefault();
                 const newExerciseName = prompt("Enter the name for the new exercise:", `Exercise ${exercises.length + 1}`);
-                if (newExerciseName && newExerciseName.trim() !== "") {
-                    // Check if exercise name already exists (case insensitive)
-                    if (exercises.some(ex => ex.name.toLowerCase() === newExerciseName.trim().toLowerCase())) {
-                        alert("An exercise with this name already exists. Please choose a different name.");
-                        return;
-                    }
-                    exercises.push(createNewExercise(newExerciseName.trim()));
-                    switchExercise(exercises.length - 1); // Switch to the new exercise
-                    saveExercises(); // Save immediately
-                    updateExerciseDropdown(); // Refresh dropdown
-                    updateDisplay(); // Refresh display
-                } else if (newExerciseName !== null) { // User pressed OK but input was empty
+                if (newExerciseName === null) return; // User cancelled
+
+                const trimmedName = newExerciseName.trim();
+                if (trimmedName === "") {
                     alert("Exercise name cannot be empty.");
+                    return;
                 }
+                if (exercises.some(ex => ex.name.toLowerCase() === trimmedName.toLowerCase())) {
+                    alert("An exercise with this name already exists. Please choose a different name.");
+                    return;
+                }
+                exercises.push(createNewExercise(trimmedName));
+                switchExercise(exercises.length - 1);
+                saveExercises();
+                updateExerciseDropdown(); // This also calls updateDisplay indirectly via switchExercise if index changes
+                // updateDisplay(); // Not strictly needed here if switchExercise caused a display update
             }
+
+            function handleRenameCurrentExercise(e) {
+                if (e) e.preventDefault();
+                if (!exercises[currentExerciseIndex]) return;
+
+                const currentName = exercises[currentExerciseIndex].name;
+                const newNamePrompt = prompt(`Enter new name for "${currentName}":`, currentName);
+
+                if (newNamePrompt === null) return; // User cancelled
+
+                const trimmedNewName = newNamePrompt.trim();
+                if (trimmedNewName === "") {
+                    alert("Exercise name cannot be empty.");
+                    return;
+                }
+                // Check if new name is different and if it already exists (excluding the current one)
+                if (trimmedNewName.toLowerCase() !== currentName.toLowerCase() &&
+                    exercises.some((ex, index) => index !== currentExerciseIndex && ex.name.toLowerCase() === trimmedNewName.toLowerCase())) {
+                    alert("An exercise with this name already exists. Please choose a different name.");
+                    return;
+                }
+
+                exercises[currentExerciseIndex].name = trimmedNewName;
+                saveExercises();
+                updateExerciseDropdown(); // Will update dropdown button text and list
+                // updateDisplay(); // Not strictly needed as dropdown update should cover visual change of name
+            }
+
+            function handleDeleteCurrentExercise(e) {
+                if (e) e.preventDefault();
+                if (!exercises[currentExerciseIndex]) return;
+
+                const exerciseNameToDelete = exercises[currentExerciseIndex].name;
+                if (!confirm(`Are you sure you want to delete "${exerciseNameToDelete}"? This action cannot be undone.`)) {
+                    return; // User cancelled
+                }
+
+                if (exercises.length === 1) {
+                    // Last exercise: reset to default instead of deleting
+                    exercises[0] = createNewExercise(DEFAULT_EXERCISE_NAME); // Reset to default
+                    currentExerciseIndex = 0; // Ensure index is 0
+                    alert(`"${exerciseNameToDelete}" was the last exercise and has been reset to "${DEFAULT_EXERCISE_NAME}".`);
+                } else {
+                    exercises.splice(currentExerciseIndex, 1); // Remove the exercise
+                    // Adjust currentExerciseIndex if it's now out of bounds
+                    if (currentExerciseIndex >= exercises.length) {
+                        currentExerciseIndex = exercises.length - 1;
+                    }
+                     // No alert needed here, UI will just update
+                }
+
+                saveExercises();
+                // switchExercise will call updateExerciseDropdown and updateDisplay
+                switchExercise(currentExerciseIndex);
+            }
+
 
             function addCountToCurrentExercise(amount) {
                 if (!exercises[currentExerciseIndex]) return;
