@@ -781,6 +781,139 @@
                 }
             }
 
+            // --- Import/Export Functionality ---
+            const exportDataBtn = document.getElementById('exportDataBtn');
+            const importDataBtn = document.getElementById('importDataBtn');
+            const importFile = document.getElementById('importFile');
+
+            if (exportDataBtn) {
+                exportDataBtn.addEventListener('click', async () => {
+                    try {
+                        const allExercises = await db.exercises.toArray();
+                        const allUserSettings = await db.userSettings.toArray();
+
+                        // Remove Dexie's auto-generated 'id' from exercises if you want cleaner export
+                        // or if you plan to rely solely on 'name' for uniqueness during import.
+                        // However, keeping 'id' can be useful if you want to preserve exact records.
+                        // For this implementation, we'll keep 'id' as it's part of the schema.
+
+                        const dataToExport = {
+                            databaseName: 'PushUpCounterDB',
+                            version: db.verno, // Dexie's way to get current DB version
+                            timestamp: new Date().toISOString(),
+                            data: {
+                                exercises: allExercises,
+                                userSettings: allUserSettings
+                            }
+                        };
+
+                        const jsonString = JSON.stringify(dataToExport, null, 2);
+                        const blob = new Blob([jsonString], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                        a.href = url;
+                        a.download = `pushup_data_${timestamp}.json`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        alert('Data exported successfully!');
+                    } catch (error) {
+                        console.error('Export failed:', error);
+                        alert('Data export failed. See console for details.');
+                    }
+                });
+            }
+
+            if (importDataBtn && importFile) {
+                importDataBtn.addEventListener('click', () => {
+                    importFile.click(); // Trigger hidden file input
+                });
+
+                importFile.addEventListener('change', async (event) => {
+                    const file = event.target.files[0];
+                    if (!file) {
+                        return;
+                    }
+
+                    if (file.type !== 'application/json') {
+                        alert('Invalid file type. Please select a .json file.');
+                        event.target.value = null; // Reset file input
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const importedData = JSON.parse(e.target.result);
+
+                            // --- Basic Validation ---
+                            if (typeof importedData !== 'object' || importedData === null) {
+                                throw new Error("Invalid JSON structure: root is not an object.");
+                            }
+                            if (importedData.databaseName !== 'PushUpCounterDB') {
+                                alert(`Warning: Importing data from an unknown database (${importedData.databaseName || 'unknown'}). Proceed with caution.`);
+                                // Could add a confirm dialog here if desired
+                            }
+                            if (importedData.version !== db.verno) {
+                                 alert(`Warning: Database version mismatch. File version: ${importedData.version}, App DB version: ${db.verno}. Data might not be fully compatible.`);
+                                // Could add a confirm dialog here
+                            }
+                            if (!importedData.data || typeof importedData.data !== 'object' || importedData.data === null) {
+                                throw new Error("Invalid JSON structure: 'data' property missing or not an object.");
+                            }
+                            if (!Array.isArray(importedData.data.exercises)) {
+                                throw new Error("Invalid JSON structure: 'data.exercises' is not an array.");
+                            }
+                            if (!Array.isArray(importedData.data.userSettings)) {
+                                throw new Error("Invalid JSON structure: 'data.userSettings' is not an array.");
+                            }
+                            // Further validation could check individual exercise/setting objects
+
+                            // --- Import Data ---
+                            await db.transaction('rw', db.exercises, db.userSettings, async () => {
+                                await db.exercises.clear();
+                                await db.userSettings.clear();
+                                // When bulkPutting exercises, Dexie will auto-generate new 'id's if they are not present
+                                // or if they conflict with the '++id' schema if you try to force them.
+                                // If IDs from the JSON are to be preserved, the schema should be just '&name' for exercises
+                                // and the import logic would need to ensure 'id' from JSON is used or remapped.
+                                // For simplicity with '++id', we let Dexie generate new IDs.
+                                // This means relationships based on old IDs would break if any existed.
+                                const exercisesToImport = importedData.data.exercises.map(ex => ({
+                                    name: ex.name, // Name is unique index, critical
+                                    count: ex.count,
+                                    goal: ex.goal
+                                    // id is omitted, so Dexie generates a new one
+                                }));
+                                await db.exercises.bulkPut(exercisesToImport);
+                                await db.userSettings.bulkPut(importedData.data.userSettings);
+                            });
+
+                            alert('Data imported successfully! The app will now reload.');
+                            // Reload the application state by re-initializing
+                            // This is a simple way to ensure all components reflect the new data.
+                            // Could also manually update state and call UI refresh functions.
+                            await initializeApp();
+                            // Or simply: window.location.reload(); if initializeApp() handles everything from DB.
+                            // initializeApp() seems more appropriate as it re-fetches from DB and updates UI.
+
+                        } catch (error) {
+                            console.error('Import failed:', error);
+                            alert(`Data import failed: ${error.message}. Please check the file format and console for details.`);
+                        } finally {
+                            event.target.value = null; // Reset file input
+                        }
+                    };
+                    reader.onerror = () => {
+                        alert('Failed to read the file.');
+                        event.target.value = null; // Reset file input
+                    };
+                    reader.readAsText(file);
+                });
+            }
+
             // --- App Initialization ---
             // DOMContentLoaded to ensure all elements are available, then initialize.
             document.addEventListener('DOMContentLoaded', initializeApp);
