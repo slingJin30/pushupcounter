@@ -555,6 +555,19 @@
             debounceBtn(subtractOneBtn, () => addCountToCurrentExercise(-1));
             debounceBtn(subtractTenBtn, () => addCountToCurrentExercise(-10));
 
+            // --- Hammer.js Swipe Gestures ---
+            if (typeof Hammer !== 'undefined') {
+                const hammer = new Hammer(completedCountEl);
+                hammer.on('swipeleft', function () {
+                    addCountToCurrentExercise(1);
+                });
+                hammer.on('swiperight', function () {
+                    addCountToCurrentExercise(-1);
+                });
+            } else {
+                console.warn('Hammer.js not loaded, swipe gestures disabled.');
+            }
+
             resetBtn.addEventListener('click', async function () {
                 if (!exercises[currentExerciseIndex]) return;
                 const currentEx = exercises[currentExerciseIndex];
