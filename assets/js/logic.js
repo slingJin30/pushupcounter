@@ -63,10 +63,10 @@
 
             // --- Accent Color Definitions ---
             const accentColors = {
-                indigo: { main: '#6366f1', light: '#a5b4fc' },
-                green: { main: '#10b981', light: '#6ee7b7' },
-                orange: { main: '#f97316', light: '#fdba74' },
-                purple: { main: '#8b5cf6', light: '#c4b5fd' }
+                indigo: { main: '#6366f1', light: '#a5b4fc', rgb: '99, 102, 241', darker: '#4f52b5', shadowDark: '#313278' },
+                green:  { main: '#10b981', light: '#6ee7b7', rgb: '16, 185, 129', darker: '#0d9467', shadowDark: '#085c40' },
+                orange: { main: '#f97316', light: '#fdba74', rgb: '249, 115, 22', darker: '#c75c12', shadowDark: '#7c3a0b' },
+                purple: { main: '#8b5cf6', light: '#c4b5fd', rgb: '139, 92, 246', darker: '#6f49c5', shadowDark: '#452e7b' }
             };
 
             // --- Utility Functions ---
@@ -133,9 +133,12 @@
                     console.warn(`Accent colour ${accentName} not found. Defaulting to indigo.`);
                     accentName = 'indigo';
                 }
-                const { main, light } = accentColors[accentName];
-                document.documentElement.style.setProperty('--accent-color', main);
-                document.documentElement.style.setProperty('--accent-color-light', light);
+                const selectedAccent = accentColors[accentName];
+                document.documentElement.style.setProperty('--accent-color', selectedAccent.main);
+                document.documentElement.style.setProperty('--accent-color-light', selectedAccent.light);
+                document.documentElement.style.setProperty('--accent-color-rgb', selectedAccent.rgb);
+                document.documentElement.style.setProperty('--accent-color-darker', selectedAccent.darker);
+                document.documentElement.style.setProperty('--accent-color-shadow-dark', selectedAccent.shadowDark);
 
                 // Update body class for potential specific overrides if needed elsewhere
                 // Remove old accent classes
