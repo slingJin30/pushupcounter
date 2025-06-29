@@ -47,22 +47,32 @@ body {
         .btn-secondary,
         .btn-primary,
         .btn-danger {
-            font-size: 1.1rem; /* Adjusted font size */
+            font-size: 1rem; /* Adjusted font size for general buttons */
             font-weight: 700;
-            border-radius: 1.5rem; /* Adjusted border radius */
-            padding: 0.6rem 1.5rem; /* Adjusted padding */
+            border-radius: 0.75rem; /* Standardized border radius */
+            padding: 0.75rem 1rem; /* Adjusted padding for better touch */
             box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
-            transition: transform 0.1s;
+            transition: transform 0.1s, box-shadow 0.2s;
+            margin: 0.25rem; /* Add small margin for spacing when wrapped */
         }
+        /* Ensure buttons in a group don't have double margins */
+        .btn-group > .btn {
+            margin: 0;
+        }
+        /* Style for icon-only buttons on very small screens */
+        .btn .bi {
+            font-size: 1.2rem; /* Ensure icons are large enough */
+        }
+
 
         .btn:active {
             transform: scale(0.97);
         }
 
         .btn-sm {
-            font-size: 0.9rem; /* Smaller font size for small buttons */
-            padding: 0.4rem 1rem; /* Smaller padding for small buttons */
-            border-radius: 1rem; /* Slightly smaller border radius */
+            font-size: 0.85rem; /* Smaller font size for small buttons */
+            padding: 0.35rem 0.8rem; /* Smaller padding for small buttons */
+            border-radius: 0.6rem; /* Slightly smaller border radius */
         }
 
         .counter-display {
@@ -147,11 +157,45 @@ body {
                 font-size: 1rem; /* Adjusted for smaller screens */
             }
 
-            .btn {
-                font-size: 0.9rem; /* Adjusted for smaller screens */
-                padding: 0.5rem 1rem; /* Adjusted for smaller screens */
+            /* General button adjustments for medium screens and below */
+            .btn-lg { /* Targetting .btn-lg for more specific control if needed */
+                font-size: 0.9rem;
+                padding: 0.6rem 0.8rem; /* Ensure padding is adequate for touch */
+            }
+             /* Ensure icons are not too small and text is optionally hidden */
+            .btn-lg .bi {
+                font-size: 1.1rem; /* Icon size for smaller buttons */
+            }
+            /* Reduce padding for screenshot area on smaller screens */
+             #screenshotArea {
+                padding: 1.5rem 0.5rem !important;
             }
         }
+
+        @media (max-width: 576px) {
+            /* Further adjustments for small screens */
+            .btn-lg {
+                padding: 0.5rem 0.5rem; /* Slightly smaller padding for very small screens */
+                font-size: 0.85rem;
+            }
+            .btn-lg .bi {
+                font-size: 1rem; /* Slightly smaller icons */
+                margin-right: 0 !important; /* Remove margin if text is hidden */
+            }
+            .btn-lg span.ms-2 { /* Hide text on very small screens by default if it was shown with d-none d-sm-inline */
+                 /* display: none; /* This is handled by bootstrap classes d-none d-sm-inline now */
+            }
+            #screenshotArea {
+                padding: 1rem 0.25rem !important; /* Minimal padding */
+            }
+            .form-label {
+                font-size: 0.9rem;
+            }
+            #usernameInput {
+                width: 100px !important; /* Reduce username input width */
+            }
+        }
+
 
         .btn,
         button {
