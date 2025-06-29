@@ -402,10 +402,10 @@ body {
             }
             .btn-lg .bi {
                 font-size: 1rem; /* Slightly smaller icons */
-                margin-right: 0 !important; /* Remove margin if text is hidden */
+                /* margin-right: 0 !important; /* Removed as ms-2 on span should handle spacing */
             }
-            .btn-lg span.ms-2 { /* Hide text on very small screens by default if it was shown with d-none d-sm-inline */
-                 /* display: none; /* This is handled by bootstrap classes d-none d-sm-inline now */
+            .btn-lg span.ms-2 {
+                /* Text is now always visible, ms-2 provides left margin. Font size is already reduced by .btn-lg rule above. */
             }
             #screenshotArea {
                 padding: 1rem 0.25rem !important; /* Minimal padding */
