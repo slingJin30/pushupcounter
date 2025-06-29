@@ -166,10 +166,12 @@
                             <div class="donate-title">Support with Bitcoin</div>
                             <div class="donate-desc mb-2">You can also support me with Bitcoin:</div>
                             <div id="bitcoinQrCode" class="mb-2 mx-auto mx-md-0" style="width: 128px; height: 128px;"></div>
-                            <div class="donate-actions d-flex align-items-center flex-wrap justify-content-center justify-content-md-start">
-                                <span class="donate-btc-label">Address:</span>
-                                <span class="donate-btc" id="bitcoinAddress" style="word-break:break-all;">bc1qhyt2vq0rlc596eee2jgef79fvmm9apm5cz57a3</span>
+                            <div class="donate-actions d-flex flex-column align-items-center align-items-md-start mt-2">
+                                <button class="btn btn-outline-secondary btn-sm" id="copyBitcoinAddressBtn" style="min-width: 128px;">
+                                    <i class="bi bi-clipboard"></i> Copy Address
+                                </button>
                             </div>
+                            <span id="bitcoinAddress" class="d-none">bc1qhyt2vq0rlc596eee2jgef79fvmm9apm5cz57a3</span>
                         </div>
                     </div>
                 </div>
