@@ -47,10 +47,10 @@ body {
         .btn-secondary,
         .btn-primary,
         .btn-danger {
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* Adjusted font size */
             font-weight: 700;
-            border-radius: 2rem;
-            padding: 0.75rem 2rem;
+            border-radius: 1.5rem; /* Adjusted border radius */
+            padding: 0.6rem 1.5rem; /* Adjusted padding */
             box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
             transition: transform 0.1s;
         }
@@ -59,20 +59,26 @@ body {
             transform: scale(0.97);
         }
 
+        .btn-sm {
+            font-size: 0.9rem; /* Smaller font size for small buttons */
+            padding: 0.4rem 1rem; /* Smaller padding for small buttons */
+            border-radius: 1rem; /* Slightly smaller border radius */
+        }
+
         .counter-display {
             font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif;
-            font-size: 7rem;
+            font-size: 6rem; /* Adjusted font size */
             font-weight: 900;
             color: #fff;
-            text-shadow: 0 4px 32px #6366f1, 0 2px 0 #fff;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 28px #6366f1, 0 2px 0 #fff; /* Adjusted text shadow */
+            letter-spacing: 0.08em; /* Adjusted letter spacing */
+            margin-bottom: 0.25rem; /* Adjusted margin */
             animation: pop 0.4s;
         }
 
         @keyframes pop {
             0% {
-                transform: scale(1.1);
+                transform: scale(1.05); /* Adjusted pop effect */
             }
 
             100% {
@@ -82,36 +88,36 @@ body {
 
         .motivational {
             font-family: 'Montserrat', 'Lato', Arial, sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.3rem; /* Adjusted font size */
             font-weight: 700;
             color: #a5b4fc;
-            margin: 1rem 0;
-            text-shadow: 0 2px 8px #6366f1;
+            margin: 0.75rem 0; /* Adjusted margin */
+            text-shadow: 0 2px 6px #6366f1; /* Adjusted text shadow */
         }
 
         .progress {
-            height: 2.5rem;
+            height: 2.2rem; /* Adjusted height */
             background: #1e293b;
-            border-radius: 1.5rem;
+            border-radius: 1.2rem; /* Adjusted border radius */
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.12); /* Adjusted box shadow */
         }
 
         .progress-bar {
-            font-size: 1.3rem;
+            font-size: 1.1rem; /* Adjusted font size */
             font-weight: 700;
             background: linear-gradient(90deg, #6366f1 0%, #a5b4fc 100%);
             color: #fff;
-            text-shadow: 0 2px 8px #6366f1;
-            border-radius: 1.5rem;
+            text-shadow: 0 2px 6px #6366f1; /* Adjusted text shadow */
+            border-radius: 1.2rem; /* Adjusted border radius */
             transition: width 0.4s cubic-bezier(.4, 2, .6, 1);
         }
 
         .modal-content {
             background: #1e293b;
             color: #fff;
-            border-radius: 1.5rem;
-            box-shadow: 0 2px 24px #6366f1;
+            border-radius: 1.2rem; /* Adjusted border radius */
+            box-shadow: 0 2px 20px #6366f1; /* Adjusted box shadow */
         }
 
         .modal-header,
@@ -120,24 +126,30 @@ body {
         }
 
         .form-control {
-            border-radius: 1rem;
-            font-size: 1.2rem;
+            border-radius: 0.8rem; /* Adjusted border radius */
+            font-size: 1.1rem; /* Adjusted font size */
             background: #fff;
             color: #1e293b;
         }
+        .form-control-sm {
+            font-size: 0.9rem; /* Smaller font size for small form controls */
+            padding: 0.4rem 0.8rem; /* Smaller padding */
+            border-radius: 0.6rem; /* Slightly smaller border radius */
+        }
+
 
         @media (max-width: 768px) {
             .counter-display {
-                font-size: 3.5rem;
+                font-size: 3rem; /* Adjusted for smaller screens */
             }
 
             .motivational {
-                font-size: 1.1rem;
+                font-size: 1rem; /* Adjusted for smaller screens */
             }
 
             .btn {
-                font-size: 1rem;
-                padding: 0.5rem 1.2rem;
+                font-size: 0.9rem; /* Adjusted for smaller screens */
+                padding: 0.5rem 1rem; /* Adjusted for smaller screens */
             }
         }
 
@@ -146,25 +158,31 @@ body {
             touch-action: manipulation;
         }
 
-        #shareBtn {
-            background: linear-gradient(90deg, #6366f1 0%, #4f46e5 100%);
+        #shareBtn { /* Styles for the share button, now in footer */
+            background: linear-gradient(90deg, #818cf8 0%, #6366f1 100%);
             color: #fff;
             border: none;
-            font-weight: 700;
-            border-radius: 2rem;
-            box-shadow: 0 2px 8px rgba(99,102,241,0.12);
-            padding: 0.75rem 2rem;
+            font-weight: 600; /* Adjusted font weight */
+            border-radius: 1.5rem; /* Adjusted border radius */
+            box-shadow: 0 2px 6px rgba(99,102,241,0.15); /* Adjusted box shadow */
+            padding: 0.5rem 1.2rem; /* Adjusted padding for a smaller button */
             transition: background 0.2s, color 0.2s, box-shadow 0.2s;
         }
 
         #shareBtn:hover, #shareBtn:focus {
-            background: linear-gradient(90deg, #818cf8 0%, #6366f1 100%);
+            background: linear-gradient(90deg, #a5b4fc 0%, #818cf8 100%);
             color: #fff;
-            box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+            box-shadow: 0 3px 12px rgba(99,102,241,0.22); /* Adjusted hover shadow */
             outline: none;
         }
 
-        /* --- Donate Section Redesign --- */
+        footer .btn-outline-light.btn-sm { /* Specificity for footer download button */
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+
+        /* --- Donate Section Redesign (already good, minor adjustments if needed) --- */
         .donate-card {
             background: linear-gradient(120deg, #232946 0%, #6366f1 100%);
             border-radius: 1.5rem;
