@@ -15,8 +15,6 @@ Track your workouts, set goals, save progress locally, personalise your experien
 
 *   **💪 Multi-Exercise Tracking:** Log not just push-ups, but any exercise you define (e.g., Sit Ups, Squats, Pull Ups).
 *   🎯 **Customisable Goals:** Set your target for each exercise and visually track your progress.
-*    motivationalMsgEl.textContent = newMessage; motivationalMsgEl.classList.remove('animate-new-message'); void motivationalMsgEl.offsetWidth; // Trigger reflow motivationalMsgEl.classList.add('animate-new-message');
-*    motivatingMsgEl.textContent = newMessage; motivationalMsgEl.classList.remove('animate-new-message'); void motivationalMsgEl.offsetWidth; // Trigger reflow motivationalMsgEl.classList.add('animate-new-message');
 *   💡 **Motivational Messages:** Receive encouraging messages to keep you going.
 *   👤 **Personalisation:** Add your username for a more personal touch.
 *   🎨 **Theme Customisation:**
@@ -103,8 +101,6 @@ No installation is needed for general use!
 
 ## 🖼️ Screenshot
 
-*(Current screenshot is `readme-example-image.png`. Consider updating with a newer one showcasing more features if desired.)*
-
 ![Current App Screenshot](readme-example-image.png)
 
 ---
@@ -136,21 +132,3 @@ Please ensure your code adheres to basic good practices and that the application
 Distributed under the MIT License. See `LICENSE` file for more information.
 
 ---
-
-## 🙏 Acknowledgements
-
-*   Bootstrap
-*   Dexie.js
-*   Hammer.js
-*   html2canvas
-*   QRCode.js
-*   Contributors & Users!
-
----
-
-## 📧 Contact
-
-Your Name / Alias - slingJin30
-Project Link: [https://github.com/slingJin30/pushupcounter](https://github.com/slingJin30/pushupcounter)
-
-Got questions or feedback? Feel free to open an issue on GitHub!
