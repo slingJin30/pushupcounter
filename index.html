@@ -32,6 +32,9 @@
                 <span style="font-family:'Montserrat','Bebas Neue',Arial,sans-serif; font-weight:800; color:#fff; text-shadow:0 2px 8px #6366f1;">Push Up Counter</span>
             </a>
             <div class="ms-auto d-flex align-items-center gap-3">
+                <div id="accentColorSelector" class="d-flex gap-1 me-2">
+                    <!-- Accent color buttons will be injected here by JS -->
+                </div>
                 <span class="theme-switcher me-2" id="themeSwitcher" title="Switch Theme" style="font-size:2rem; cursor:pointer; transition:color 0.2s;">🌙</span>
             </div>
         </div>
@@ -39,17 +42,31 @@
     <div class="container py-4">
         <div class="row mb-4">
             <div class="col-12 text-center">
-                <div id="screenshotArea"
-                    style="display:inline-block; background:rgba(30,41,59,0.95); border-radius:2rem; padding:2rem 1rem; box-shadow:0 4px 24px rgba(0,0,0,0.12);">
+                <div id="screenshotArea"> <!-- Removed inline styles, will be controlled by CSS -->
                     <div class="mb-3">
                         <form id="usernameForm" class="d-inline-flex align-items-center gap-2">
-                            <label for="usernameInput" class="form-label mb-0 fw-bold" style="color:#fff;">Username:</label>
+                            <label for="usernameInput" class="form-label mb-0 fw-bold">Username:</label> <!-- Removed inline style -->
                             <input type="text" id="usernameInput" class="form-control form-control-sm" style="width:150px;" maxlength="20"
                                 placeholder="Enter your name">
                             <button type="submit" class="btn btn-primary btn-sm">Save</button>
                         </form>
                     </div>
                     <div class="fw-bold text-info mb-2" id="displayUsername" style="font-size:1.3rem;"></div>
+
+                    <!-- Exercise Selection Dropdown -->
+                    <div class="mb-3">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="exerciseDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                Select Exercise
+                            </button>
+                            <ul class="dropdown-menu w-100" id="exerciseList" aria-labelledby="exerciseDropdownBtn">
+                                <!-- Exercise items will be populated by JS -->
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="addNewExerciseBtn"><i class="bi bi-plus-circle-fill me-2"></i>Add New Exercise</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
                     <div class="counter-display" id="completedCount">0</div>
                     <div class="motivational" id="motivationalMsg">Keep going! You're crushing it! 💪</div>
                     <div class="progress my-3" style="min-width:250px;">
