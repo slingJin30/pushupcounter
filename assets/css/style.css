@@ -357,6 +357,17 @@ body {
             color: var(--accent-color);
         }
 
+        #screenshotArea hr {
+            border: none; /* Remove default border */
+            height: 1px; /* Set a height for the HR */
+            background-color: rgba(var(--accent-color-rgb), 0.25); /* Subtle accent color */
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        [data-bs-theme="dark"] #screenshotArea hr {
+            background-color: rgba(var(--accent-color-rgb), 0.15); /* Even more subtle in dark mode */
+        }
+
 
         /* --- Media Queries (adjustments as needed) --- */
         @media (max-width: 768px) {
