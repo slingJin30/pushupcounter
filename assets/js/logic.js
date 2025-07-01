@@ -20,7 +20,7 @@
     let currentExerciseName = DEFAULT_EXERCISE_NAME; // Name of the currently active exercise, stored in DB
 
     const motivationalMessages = [
-        "Keep going! You're crushing it!",
+        "Keep going DICKHEAD! You're crushing it!",
         "Push through the burn!",
                 "Every rep counts.",
                 "Eyes on the prize!",
